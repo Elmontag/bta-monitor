@@ -86,3 +86,45 @@ export interface PollCounts {
   no_show: number;
   total: number;
 }
+
+export interface Politician {
+  id: number;
+  label: string;
+  abgeordnetenwatch_url?: string;
+}
+
+export interface FractionMembership {
+  id: number;
+  label: string;
+  fraction: { id: number; label: string };
+  valid_from: string;
+  valid_until: string | null;
+}
+
+export interface CandidacyMandate {
+  id: number;
+  label: string;
+  type: 'mandate' | 'candidacy';
+  parliament_period: { id: number; label: string };
+  politician: Politician;
+  start_date: string | null;
+  end_date: string | null;
+  info: string | null;
+  electoral_data: {
+    electoral_list?: { label: string } | null;
+    list_position?: number | null;
+    constituency?: { label: string } | null;
+    mandate_won?: string | null;
+  } | null;
+  fraction_membership: FractionMembership[];
+}
+
+export interface MandateVote {
+  id: number;
+  label: string;
+  mandate: { id: number; label: string };
+  poll: { id: number; label: string; abgeordnetenwatch_url?: string };
+  vote: VoteChoice;
+  reason_no_show: string | null;
+  fraction: { id: number; label: string };
+}

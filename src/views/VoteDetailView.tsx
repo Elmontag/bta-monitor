@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { api } from '../api/client';
+import { api, extractLabel } from '../api/client';
 import type { Poll, VoteResult, FractionStats } from '../types/api';
 import { computePollCounts, computeFractionStats, fractionColors, voteLabel, voteBadge } from '../utils/voteUtils';
 
-interface VoteDetailProps {
+interface VoteDetailViewProps {
   poll: Poll;
   onBack: () => void;
+  onSelectFraction: (fractionId: number, fractionName: string, votes: VoteResult[]) => void;
+  onSelectMember: (mandateId: number, mandateName: string, fractionName: string) => void;
 }
 
 type Tab = 'overview' | 'fractions' | 'members';
 
 const CHART_COLORS = ['#10b981', '#ef4444', '#f59e0b', '#94a3b8'];
 
-export function VoteDetail({ poll, onBack }: VoteDetailProps) {
+export function VoteDetailView({ poll, onBack, onSelectFraction, onSelectMember }: VoteDetailViewProps) {
   const [results, setResults] = useState<VoteResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +25,7 @@ export function VoteDetail({ poll, onBack }: VoteDetailProps) {
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true); // eslint-disable-line react-hooks/set-state-in-effect
+    setLoading(true);
 
     api.getVoteResults(poll.id)
       .then((data) => {
@@ -67,35 +69,27 @@ export function VoteDetail({ poll, onBack }: VoteDetailProps) {
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
-      {/* Back button + title */}
       <div className="mb-5">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-3 transition"
+          className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-3 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Zurück zur Liste
+          Zurück
         </button>
 
         <h1 className="text-xl md:text-2xl font-bold text-slate-900 leading-tight">{poll.label}</h1>
         <div className="flex flex-wrap items-center gap-2 mt-2">
           <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm font-semibold ${
-            poll.field_accepted
-              ? 'bg-emerald-100 text-emerald-800'
-              : 'bg-red-100 text-red-800'
+            poll.field_accepted ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'
           }`}>
             {poll.field_accepted ? '✓ Angenommen' : '✗ Abgelehnt'}
           </span>
           {poll.field_poll_date && (
             <span className="px-2.5 py-1 rounded-full text-xs bg-slate-100 text-slate-600">
               {new Date(poll.field_poll_date).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
-            </span>
-          )}
-          {hasVotes && (
-            <span className="px-2.5 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
-              Namentliche Abstimmung
             </span>
           )}
           {poll.field_committees?.[0] && (
@@ -111,14 +105,13 @@ export function VoteDetail({ poll, onBack }: VoteDetailProps) {
         </div>
       </div>
 
-      {/* Tabs */}
       {TABS.length > 1 && (
         <div className="flex gap-1 mb-5 border-b border-slate-200">
           {TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`px-4 py-2 text-sm font-medium rounded-t transition -mb-px border-b-2 ${
+              className={`px-4 py-2 text-sm font-medium rounded-t transition-colors -mb-px border-b-2 ${
                 tab === t.id
                   ? 'text-blue-600 border-blue-600'
                   : 'text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300'
@@ -130,7 +123,6 @@ export function VoteDetail({ poll, onBack }: VoteDetailProps) {
         </div>
       )}
 
-      {/* Loading */}
       {loading && (
         <div className="space-y-4">
           <div className="h-32 bg-slate-200 rounded-xl animate-pulse" />
@@ -147,18 +139,14 @@ export function VoteDetail({ poll, onBack }: VoteDetailProps) {
       {!loading && !error && (
         <>
           {tab === 'overview' && (
-            <OverviewTab
-              poll={poll}
-              counts={counts}
-              pieData={pieData}
-              hasVotes={hasVotes}
-            />
+            <OverviewTab poll={poll} counts={counts} pieData={pieData} hasVotes={hasVotes} />
           )}
           {tab === 'fractions' && (
             <FractionsTab
               fractions={fractions}
               expandedFraction={expandedFraction}
               setExpandedFraction={setExpandedFraction}
+              onSelectFraction={(id, name) => onSelectFraction(id, name, results)}
             />
           )}
           {tab === 'members' && (
@@ -166,6 +154,7 @@ export function VoteDetail({ poll, onBack }: VoteDetailProps) {
               results={results}
               search={memberSearch}
               onSearchChange={setMemberSearch}
+              onSelectMember={onSelectMember}
             />
           )}
         </>
@@ -186,7 +175,6 @@ interface OverviewTabProps {
 function OverviewTab({ poll, counts, pieData, hasVotes }: OverviewTabProps) {
   return (
     <div className="space-y-5">
-      {/* Stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Ja', count: counts.yes, color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-100' },
@@ -206,11 +194,10 @@ function OverviewTab({ poll, counts, pieData, hasVotes }: OverviewTabProps) {
         ))}
       </div>
 
-      {/* Stacked bar */}
       {counts.total > 0 && (
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <div className="flex h-5 rounded-full overflow-hidden">
-            {counts.yes > 0 && <div className="bg-emerald-500 transition-all" style={{ width: `${(counts.yes / counts.total) * 100}%` }} />}
+            {counts.yes > 0 && <div className="bg-emerald-500" style={{ width: `${(counts.yes / counts.total) * 100}%` }} />}
             {counts.no > 0 && <div className="bg-red-500" style={{ width: `${(counts.no / counts.total) * 100}%` }} />}
             {counts.abstain > 0 && <div className="bg-amber-400" style={{ width: `${(counts.abstain / counts.total) * 100}%` }} />}
             {counts.no_show > 0 && <div className="bg-slate-200" style={{ width: `${(counts.no_show / counts.total) * 100}%` }} />}
@@ -232,7 +219,6 @@ function OverviewTab({ poll, counts, pieData, hasVotes }: OverviewTabProps) {
         </div>
       )}
 
-      {/* Charts */}
       {counts.total > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white rounded-xl border border-slate-200 p-4">
@@ -267,7 +253,6 @@ function OverviewTab({ poll, counts, pieData, hasVotes }: OverviewTabProps) {
         </div>
       )}
 
-      {/* Description */}
       {poll.field_intro && (
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <h3 className="text-sm font-semibold text-slate-700 mb-3">Beschreibung</h3>
@@ -278,19 +263,14 @@ function OverviewTab({ poll, counts, pieData, hasVotes }: OverviewTabProps) {
         </div>
       )}
 
-      {/* Related links */}
       {poll.field_related_links && poll.field_related_links.length > 0 && (
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <h3 className="text-sm font-semibold text-slate-700 mb-3">Weiterführende Links</h3>
           <ul className="space-y-1.5">
             {poll.field_related_links.map((link) => (
               <li key={link.uri}>
-                <a
-                  href={link.uri}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:text-blue-800 underline"
-                >
+                <a href={link.uri} target="_blank" rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:text-blue-800 underline">
                   {link.title}
                 </a>
               </li>
@@ -314,9 +294,10 @@ interface FractionsTabProps {
   fractions: FractionStats[];
   expandedFraction: number | null;
   setExpandedFraction: (id: number | null) => void;
+  onSelectFraction: (id: number, name: string) => void;
 }
 
-function FractionsTab({ fractions, expandedFraction, setExpandedFraction }: FractionsTabProps) {
+function FractionsTab({ fractions, expandedFraction, setExpandedFraction, onSelectFraction }: FractionsTabProps) {
   return (
     <div className="space-y-3">
       {fractions.map((f) => {
@@ -326,14 +307,17 @@ function FractionsTab({ fractions, expandedFraction, setExpandedFraction }: Frac
 
         return (
           <div key={f.fractionId} className={`rounded-xl border ${colors.border} ${colors.bg} overflow-hidden`}>
-            <button
-              className="w-full text-left p-4"
-              onClick={() => setExpandedFraction(isExpanded ? null : f.fractionId)}
-            >
+            <div className="p-4">
               <div className="flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-2">
-                    <span className={`font-semibold text-sm ${colors.text}`}>{f.fractionName}</span>
+                    <button
+                      onClick={() => onSelectFraction(f.fractionId, f.fractionName)}
+                      className={`font-semibold text-sm ${colors.text} hover:underline cursor-pointer flex items-center gap-1`}
+                    >
+                      {f.fractionName}
+                      <span className="text-xs opacity-60">→</span>
+                    </button>
                     <span className="text-xs text-slate-500">{total} Mitglieder</span>
                     {f.deviants.length > 0 && (
                       <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full border border-orange-200">
@@ -358,15 +342,20 @@ function FractionsTab({ fractions, expandedFraction, setExpandedFraction }: Frac
                 <CohesionRing value={f.cohesion} />
 
                 {f.deviants.length > 0 && (
-                  <svg
-                    className={`w-4 h-4 text-slate-500 flex-shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  <button
+                    onClick={() => setExpandedFraction(isExpanded ? null : f.fractionId)}
+                    className="p-1 rounded hover:bg-black/5 transition-colors"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                    <svg
+                      className={`w-4 h-4 text-slate-500 flex-shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
                 )}
               </div>
-            </button>
+            </div>
 
             {isExpanded && f.deviants.length > 0 && (
               <div className="border-t border-black/5 px-4 py-3">
@@ -375,7 +364,7 @@ function FractionsTab({ fractions, expandedFraction, setExpandedFraction }: Frac
                   {f.deviants.map((d) => (
                     <span key={d.name} className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${voteBadge(d.vote)}`}>
                       {d.name}
-                      <span className="opacity-70">·{voteLabel(d.vote)}</span>
+                      <span className="opacity-70">· {voteLabel(d.vote)}</span>
                     </span>
                   ))}
                 </div>
@@ -412,17 +401,18 @@ interface MembersTabProps {
   results: VoteResult[];
   search: string;
   onSearchChange: (s: string) => void;
+  onSelectMember: (mandateId: number, mandateName: string, fractionName: string) => void;
 }
 
-function MembersTab({ results, search, onSearchChange }: MembersTabProps) {
+function MembersTab({ results, search, onSearchChange, onSelectMember }: MembersTabProps) {
   const [sortKey, setSortKey] = useState<'name' | 'fraction' | 'vote'>('fraction');
   const [filterVote, setFilterVote] = useState('all');
 
   const processed = results
     .map((r) => ({
       ...r,
-      cleanName: r.mandate.label.replace(/\s*\([^)]+\)\s*$/, '').trim(),
-      cleanFraction: r.fraction.label.replace(/\s*\([^)]+\)\s*$/, '').trim(),
+      cleanName: extractLabel(r.mandate.label),
+      cleanFraction: extractLabel(r.fraction.label),
     }))
     .filter((r) => {
       const matchSearch = !search || r.cleanName.toLowerCase().includes(search.toLowerCase()) || r.cleanFraction.toLowerCase().includes(search.toLowerCase());
@@ -484,8 +474,12 @@ function MembersTab({ results, search, onSearchChange }: MembersTabProps) {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {processed.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-50 transition">
-                  <td className="px-4 py-2.5 font-medium text-slate-800">{r.cleanName}</td>
+                <tr
+                  key={r.id}
+                  onClick={() => onSelectMember(r.mandate.id, r.cleanName, r.cleanFraction)}
+                  className="hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  <td className="px-4 py-2.5 font-medium text-blue-700 hover:underline">{r.cleanName}</td>
                   <td className="px-4 py-2.5 text-slate-500">{r.cleanFraction}</td>
                   <td className="px-4 py-2.5 text-center">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${voteBadge(r.vote)}`}>

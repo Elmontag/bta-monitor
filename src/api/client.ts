@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Parliament, ParliamentPeriod, Poll, VoteResult, APIResponse } from '../types/api';
+import type { Parliament, ParliamentPeriod, Poll, VoteResult, APIResponse, APISingleResponse, CandidacyMandate, MandateVote } from '../types/api';
 
 const API_BASE = 'https://www.abgeordnetenwatch.de/api/v2';
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
@@ -76,6 +76,20 @@ export const api = {
       related_data: 'votes',
     });
     return res.data?.related_data?.votes ?? [];
+  },
+
+  async getMandateVotes(mandateId: number, rangeEnd = 100): Promise<{ votes: MandateVote[]; total: number }> {
+    const res = await get<APIResponse<MandateVote>>('/votes', {
+      mandate: mandateId,
+      range_end: rangeEnd,
+      sort_by: 'poll',
+    });
+    return { votes: res.data, total: res.meta.result.total };
+  },
+
+  async getCandidacyMandate(mandateId: number): Promise<CandidacyMandate> {
+    const res = await get<APISingleResponse<CandidacyMandate>>(`/candidacies-mandates/${mandateId}`);
+    return res.data;
   },
 };
 
