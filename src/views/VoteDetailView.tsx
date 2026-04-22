@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { CircleCheck, CircleX, TriangleAlert } from 'lucide-react';
 import { api, extractLabel } from '../api/client';
 import type { Poll, VoteResult, FractionStats } from '../types/api';
 import { computePollCounts, computeFractionStats, fractionColors, voteLabel, voteBadge } from '../utils/voteUtils';
@@ -62,7 +63,7 @@ export function VoteDetailView({ poll, onBack, onSelectFraction, onSelectMember 
   const TABS: Array<{ id: Tab; label: string }> = [
     { id: 'overview', label: 'Ergebnis' },
     ...(!loading && hasVotes ? [
-      { id: 'fractions' as Tab, label: `Fraktionen${totalDeviants > 0 ? ` (${totalDeviants} ⚠️)` : ''}` },
+      { id: 'fractions' as Tab, label: `Fraktionen${totalDeviants > 0 ? ` (${totalDeviants})` : ''}` },
       { id: 'members' as Tab, label: `Mitglieder (${results.length})` },
     ] : []),
   ];
@@ -85,7 +86,10 @@ export function VoteDetailView({ poll, onBack, onSelectFraction, onSelectMember 
           <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm font-semibold ${
             poll.field_accepted ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'
           }`}>
-            {poll.field_accepted ? '✓ Angenommen' : '✗ Abgelehnt'}
+            {poll.field_accepted
+              ? <><CircleCheck className="w-4 h-4" /> Angenommen</>
+              : <><CircleX className="w-4 h-4" /> Abgelehnt</>
+            }
           </span>
           {poll.field_poll_date && (
             <span className="px-2.5 py-1 rounded-full text-xs bg-slate-100 text-slate-600">
@@ -321,7 +325,7 @@ function FractionsTab({ fractions, expandedFraction, setExpandedFraction, onSele
                     <span className="text-xs text-slate-500">{total} Mitglieder</span>
                     {f.deviants.length > 0 && (
                       <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full border border-orange-200">
-                        ⚠️ {f.deviants.length} Abweichler
+                        <TriangleAlert className="w-3 h-3" /> {f.deviants.length} Abweichler
                       </span>
                     )}
                   </div>

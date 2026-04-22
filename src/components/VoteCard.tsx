@@ -1,3 +1,4 @@
+import { CircleCheck, CircleX } from 'lucide-react';
 import type { Poll } from '../types/api';
 
 interface VoteCardProps {
@@ -20,7 +21,10 @@ export function VoteCard({ poll, onClick }: VoteCardProps) {
             ? 'bg-emerald-100 text-emerald-700'
             : 'bg-red-100 text-red-700'
         }`}>
-          {poll.field_accepted ? '✓ Angenommen' : '✗ Abgelehnt'}
+          {poll.field_accepted
+            ? <><CircleCheck className="w-3 h-3" /> Angenommen</>
+            : <><CircleX className="w-3 h-3" /> Abgelehnt</>
+          }
         </span>
         {poll.field_poll_date && (
           <span className="text-xs text-slate-400 flex-shrink-0">

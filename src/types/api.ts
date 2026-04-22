@@ -128,3 +128,29 @@ export interface MandateVote {
   reason_no_show: string | null;
   fraction: { id: number; label: string };
 }
+
+// Fraction from fractions endpoint
+export interface Fraction {
+  id: number;
+  label: string;
+  parliament_period: { id: number; label: string };
+}
+
+// dawum.de types
+export interface DawumSurvey {
+  id: string;
+  date: string;
+  parliament_id: string;
+  institute_id: string;
+  method_id: string;
+  surveyed_persons: string;
+  results: Record<string, number>;
+  survey_period: { start: string; end: string };
+}
+
+export interface DawumData {
+  parliaments: Record<string, { Shortcut: string; Name: string; Election: string }>;
+  institutes: Record<string, { Name: string }>;
+  parties: Record<string, { Shortcut: string; Name: string }>;
+  surveys: DawumSurvey[];
+}

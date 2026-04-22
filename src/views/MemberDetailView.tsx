@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api, extractLabel } from '../api/client';
+import { ExternalLink } from 'lucide-react';
 import type { Parliament, ParliamentPeriod, Poll, CandidacyMandate, MandateVote } from '../types/api';
 import { fractionColors, voteBadge, voteLabel } from '../utils/voteUtils';
 
@@ -96,10 +97,10 @@ export function MemberDetailView({
             {electoralInfo && (
               <div className="mt-2 text-xs text-slate-500 flex flex-wrap gap-3">
                 {electoralInfo.constituency?.label && (
-                  <span>📍 {electoralInfo.constituency.label}</span>
+                  <span>Wahlkreis: {electoralInfo.constituency.label}</span>
                 )}
                 {electoralInfo.electoral_list?.label && (
-                  <span>📋 {extractLabel(electoralInfo.electoral_list.label)}</span>
+                  <span>Liste: {extractLabel(electoralInfo.electoral_list.label)}</span>
                 )}
                 {electoralInfo.list_position != null && (
                   <span>Listenplatz {electoralInfo.list_position}</span>
@@ -182,10 +183,10 @@ export function MemberDetailView({
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="flex-shrink-0 text-xs text-blue-500 hover:text-blue-700 transition-colors"
+                            className="flex-shrink-0 text-blue-500 hover:text-blue-700 transition-colors"
                             title="Auf abgeordnetenwatch.de öffnen"
                           >
-                            ↗
+                            <ExternalLink className="w-3.5 h-3.5" />
                           </a>
                         )}
                       </div>

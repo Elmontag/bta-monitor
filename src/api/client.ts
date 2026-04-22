@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Parliament, ParliamentPeriod, Poll, VoteResult, APIResponse, APISingleResponse, CandidacyMandate, MandateVote } from '../types/api';
+import type { Parliament, ParliamentPeriod, Poll, VoteResult, APIResponse, APISingleResponse, CandidacyMandate, MandateVote, Fraction } from '../types/api';
 
 const API_BASE = 'https://www.abgeordnetenwatch.de/api/v2';
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
@@ -89,6 +89,41 @@ export const api = {
 
   async getCandidacyMandate(mandateId: number): Promise<CandidacyMandate> {
     const res = await get<APISingleResponse<CandidacyMandate>>(`/candidacies-mandates/${mandateId}`);
+    return res.data;
+  },
+
+  async getFractionsForPeriod(periodId: number): Promise<Fraction[]> {
+    const res = await get<APIResponse<Fraction>>('/fractions', {
+      parliament_period: periodId,
+      range_end: 50,
+    });
+    return res.data;
+  },
+
+  async getMandatesForPeriod(periodId: number, rangeStart = 0, rangeEnd = 100): Promise<{ mandates: CandidacyMandate[]; total: number }> {
+    const res = await get<APIResponse<CandidacyMandate>>('/candidacies-mandates', {
+      parliament_period: periodId,
+      type: 'mandate',
+      range_start: rangeStart,
+      range_end: rangeEnd,
+    });
+    return { mandates: res.data, total: res.meta.result.total };
+  },
+
+  async searchPolls(query: string, rangeEnd = 10): Promise<Poll[]> {
+    const res = await get<APIResponse<Poll>>('/polls', {
+      'label[cn]': query,
+      range_end: rangeEnd,
+    });
+    return res.data;
+  },
+
+  async searchMandates(query: string, rangeEnd = 10): Promise<CandidacyMandate[]> {
+    const res = await get<APIResponse<CandidacyMandate>>('/candidacies-mandates', {
+      'label[cn]': query,
+      type: 'mandate',
+      range_end: rangeEnd,
+    });
     return res.data;
   },
 };

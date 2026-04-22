@@ -3,26 +3,40 @@ import './index.css';
 import type { Parliament, ParliamentPeriod, Poll, VoteResult } from './types/api';
 import { api } from './api/client';
 import { Navbar } from './components/Navbar';
-import { ParliamentView } from './views/ParliamentView';
+import { LandingPage } from './views/LandingPage';
+import { ParliamentPage } from './views/ParliamentPage';
+import type { ParliamentTab } from './views/ParliamentPage';
+import { VoteListTab } from './views/tabs/VoteListTab';
+import { FractionsListTab } from './views/tabs/FractionsListTab';
+import { MembersListTab } from './views/tabs/MembersListTab';
+import { DonationsTab } from './views/tabs/DonationsTab';
+import { PollsTrendTab } from './views/tabs/PollsTrendTab';
+import { OverviewTab } from './views/tabs/OverviewTab';
 import { VoteDetailView } from './views/VoteDetailView';
 import { FractionDetailView } from './views/FractionDetailView';
 import { MemberDetailView } from './views/MemberDetailView';
+import { SearchOverlay } from './components/SearchOverlay';
 
 type AppView =
   | { page: 'home' }
-  | { page: 'parliament'; parliament: Parliament; period: ParliamentPeriod }
+  | { page: 'parliament'; parliament: Parliament; period: ParliamentPeriod; tab: ParliamentTab }
   | { page: 'vote'; poll: Poll; parliament: Parliament; period: ParliamentPeriod; voteResults?: VoteResult[] }
   | { page: 'fraction'; fractionId: number; fractionName: string; parliament: Parliament; period: ParliamentPeriod; contextVotes?: VoteResult[]; contextPoll?: Poll }
   | { page: 'member'; mandateId: number; mandateName: string; fractionName: string; parliament: Parliament; period: ParliamentPeriod };
 
+const DUMMY_PERIOD: ParliamentPeriod = {
+  id: 0, label: '—', start_date_period: '', end_date_period: '',
+  type: 'legislature', parliament: { id: 0, label: '—' },
+};
+const DUMMY_PARLIAMENT: Parliament = { id: 0, label: '—', label_external_long: '—' };
+
 export default function App() {
   const [parliaments, setParliaments] = useState<Parliament[]>([]);
-  const [periods, setPeriods] = useState<ParliamentPeriod[]>([]);
-  const [selectedParliament, setSelectedParliament] = useState<Parliament | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState<ParliamentPeriod | null>(null);
-  const [loadingNav, setLoadingNav] = useState(true);
-
+  const [loadingParliaments, setLoadingParliaments] = useState(true);
+  const [periodsCache, setPeriodsCache] = useState<Record<number, ParliamentPeriod[]>>({});
   const [stack, setStack] = useState<AppView[]>([{ page: 'home' }]);
+  const [searchOpen, setSearchOpen] = useState(false);
+
   const current = stack[stack.length - 1];
 
   function navigate(view: AppView) {
@@ -33,46 +47,50 @@ export default function App() {
     setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
   }
 
-  // Load parliaments on mount
-  useEffect(() => {
-    api.getParliaments()
-      .then((data) => {
-        setParliaments(data);
-        const bundestag = data.find((p) => p.id === 5) ?? data[0];
-        if (bundestag) setSelectedParliament(bundestag);
-      })
-      .finally(() => setLoadingNav(false));
-  }, []);
-
-  // Load periods when parliament changes
-  useEffect(() => {
-    if (!selectedParliament) return;
-    api.getParliamentPeriods(selectedParliament.id).then((data) => {
-      setPeriods(data);
-      if (data.length > 0) {
-        const first = data[0];
-        setSelectedPeriod(first);
-        setStack([{ page: 'parliament', parliament: selectedParliament, period: first }]);
-      }
-    });
-  }, [selectedParliament?.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  function handleParliamentChange(p: Parliament) {
-    setSelectedParliament(p);
-    setPeriods([]);
-    setSelectedPeriod(null);
+  function goHome() {
+    setStack([{ page: 'home' }]);
   }
 
-  function handlePeriodChange(p: ParliamentPeriod) {
-    setSelectedPeriod(p);
-    if (selectedParliament) {
-      setStack([{ page: 'parliament', parliament: selectedParliament, period: p }]);
+  useEffect(() => {
+    api.getParliaments()
+      .then(setParliaments)
+      .finally(() => setLoadingParliaments(false));
+  }, []);
+
+  async function getOrLoadPeriods(parliamentId: number): Promise<ParliamentPeriod[]> {
+    if (periodsCache[parliamentId]) return periodsCache[parliamentId];
+    const data = await api.getParliamentPeriods(parliamentId);
+    setPeriodsCache((c) => ({ ...c, [parliamentId]: data }));
+    return data;
+  }
+
+  async function handleSelectParliament(p: Parliament) {
+    const periods = await getOrLoadPeriods(p.id);
+    if (periods.length > 0) {
+      navigate({ page: 'parliament', parliament: p, period: periods[0], tab: 'overview' });
     }
   }
 
-  // Build breadcrumb
+  function handlePeriodChange(period: ParliamentPeriod) {
+    if (current.page === 'parliament') {
+      setStack((s) => [
+        ...s.slice(0, -1),
+        { ...current, period, tab: 'overview' },
+      ]);
+    }
+  }
+
+  function handleTabChange(tab: ParliamentTab) {
+    if (current.page === 'parliament') {
+      setStack((s) => [
+        ...s.slice(0, -1),
+        { ...current, tab },
+      ]);
+    }
+  }
+
   function buildBreadcrumb() {
-    if (stack.length <= 1 && current.page === 'home') return null;
+    if (current.page === 'home') return null;
 
     const crumbs: { label: string; onClick?: () => void }[] = [];
 
@@ -80,7 +98,6 @@ export default function App() {
       const view = stack[i];
       const isLast = i === stack.length - 1;
       const targetIdx = i;
-
       const onClick = isLast ? undefined : () => setStack(stack.slice(0, targetIdx + 1));
 
       if (view.page === 'home') {
@@ -93,7 +110,7 @@ export default function App() {
           crumbs.push({ label: view.parliament.label });
           crumbs.push({ label: view.period.label });
         }
-        const title = view.poll.label.length > 40 ? view.poll.label.slice(0, 40) + '…' : view.poll.label;
+        const title = view.poll.label.length > 40 ? view.poll.label.slice(0, 40) + '...' : view.poll.label;
         crumbs.push({ label: title, onClick });
       } else if (view.page === 'fraction') {
         if (crumbs.length === 0) {
@@ -127,99 +144,142 @@ export default function App() {
   }
 
   function renderView() {
-    if (current.page === 'home' || !selectedParliament || !selectedPeriod) {
+    if (current.page === 'home') {
       return (
-        <div className="flex items-center justify-center h-full min-h-[60vh] text-slate-400 text-sm">
-          {loadingNav ? 'Lade Parlamente…' : 'Bitte wähle ein Parlament und eine Legislaturperiode.'}
-        </div>
+        <LandingPage
+          parliaments={parliaments}
+          onSelect={handleSelectParliament}
+          onSearchOpen={() => setSearchOpen(true)}
+          loading={loadingParliaments}
+        />
       );
     }
 
     if (current.page === 'parliament') {
+      const periods = periodsCache[current.parliament.id] ?? [];
       return (
-        <ParliamentView
+        <ParliamentPage
           parliament={current.parliament}
           period={current.period}
-          onSelectPoll={(poll) => navigate({
-            page: 'vote',
-            poll,
-            parliament: current.parliament,
-            period: current.period,
-          })}
-        />
+          periods={periods}
+          tab={current.tab}
+          onHome={goHome}
+          onPeriodChange={handlePeriodChange}
+          onTabChange={handleTabChange}
+        >
+          {current.tab === 'overview' && (
+            <OverviewTab
+              parliament={current.parliament}
+              period={current.period}
+              onTabChange={(tab) => handleTabChange(tab as import('./views/ParliamentPage').ParliamentTab)}
+            />
+          )}
+          {current.tab === 'votes' && (
+            <VoteListTab
+              period={current.period}
+              onSelectPoll={(poll) => navigate({
+                page: 'vote', poll,
+                parliament: current.parliament,
+                period: current.period,
+              })}
+            />
+          )}
+          {current.tab === 'fractions' && (
+            <FractionsListTab
+              period={current.period}
+              onSelectFraction={(id, name) => navigate({
+                page: 'fraction', fractionId: id, fractionName: name,
+                parliament: current.parliament,
+                period: current.period,
+              })}
+            />
+          )}
+          {current.tab === 'members' && (
+            <MembersListTab
+              period={current.period}
+              onSelectMember={(mandateId, name, fractionName) => navigate({
+                page: 'member', mandateId, mandateName: name, fractionName,
+                parliament: current.parliament,
+                period: current.period,
+              })}
+            />
+          )}
+          {current.tab === 'donations' && current.parliament.id === 5 && (
+            <DonationsTab />
+          )}
+          {current.tab === 'polls' && (
+            <PollsTrendTab parliament={current.parliament} period={current.period} />
+          )}
+        </ParliamentPage>
       );
     }
 
     if (current.page === 'vote') {
       return (
-        <VoteDetailView
-          poll={current.poll}
-          onBack={goBack}
-          onSelectFraction={(fractionId, fractionName, votes) => navigate({
-            page: 'fraction',
-            fractionId,
-            fractionName,
-            parliament: current.parliament,
-            period: current.period,
-            contextVotes: votes,
-            contextPoll: current.poll,
-          })}
-          onSelectMember={(mandateId, mandateName, fractionName) => navigate({
-            page: 'member',
-            mandateId,
-            mandateName,
-            fractionName,
-            parliament: current.parliament,
-            period: current.period,
-          })}
-        />
+        <div className="flex-1 overflow-y-auto">
+          <VoteDetailView
+            poll={current.poll}
+            onBack={goBack}
+            onSelectFraction={(fractionId, fractionName, votes) => navigate({
+              page: 'fraction', fractionId, fractionName,
+              parliament: current.parliament,
+              period: current.period,
+              contextVotes: votes,
+              contextPoll: current.poll,
+            })}
+            onSelectMember={(mandateId, mandateName, fractionName) => navigate({
+              page: 'member', mandateId, mandateName, fractionName,
+              parliament: current.parliament,
+              period: current.period,
+            })}
+          />
+        </div>
       );
     }
 
     if (current.page === 'fraction') {
       return (
-        <FractionDetailView
-          fractionId={current.fractionId}
-          fractionName={current.fractionName}
-          period={current.period}
-          parliament={current.parliament}
-          onBack={goBack}
-          onSelectMember={(mandateId, mandateName, fractionName) => navigate({
-            page: 'member',
-            mandateId,
-            mandateName,
-            fractionName,
-            parliament: current.parliament,
-            period: current.period,
-          })}
-          onSelectPoll={(poll) => navigate({
-            page: 'vote',
-            poll,
-            parliament: current.parliament,
-            period: current.period,
-          })}
-          contextVotes={current.contextVotes}
-          contextPoll={current.contextPoll}
-        />
+        <div className="flex-1 overflow-y-auto">
+          <FractionDetailView
+            fractionId={current.fractionId}
+            fractionName={current.fractionName}
+            period={current.period}
+            parliament={current.parliament}
+            onBack={goBack}
+            onSelectMember={(mandateId, mandateName, fractionName) => navigate({
+              page: 'member', mandateId, mandateName, fractionName,
+              parliament: current.parliament,
+              period: current.period,
+            })}
+            onSelectPoll={(poll) => navigate({
+              page: 'vote', poll,
+              parliament: current.parliament,
+              period: current.period,
+            })}
+            contextVotes={current.contextVotes}
+            contextPoll={current.contextPoll}
+          />
+        </div>
       );
     }
 
     if (current.page === 'member') {
       return (
-        <MemberDetailView
-          mandateId={current.mandateId}
-          mandateName={current.mandateName}
-          fractionName={current.fractionName}
-          period={current.period}
-          parliament={current.parliament}
-          onBack={goBack}
-          onSelectPoll={(poll) => navigate({
-            page: 'vote',
-            poll,
-            parliament: current.parliament,
-            period: current.period,
-          })}
-        />
+        <div className="flex-1 overflow-y-auto">
+          <MemberDetailView
+            mandateId={current.mandateId}
+            mandateName={current.mandateName}
+            fractionName={current.fractionName}
+            period={current.period}
+            parliament={current.parliament}
+            onBack={goBack}
+            onSelectPoll={(poll) => navigate({
+              page: 'vote', poll,
+              parliament: current.parliament,
+              period: current.period,
+            })}
+          />
+        </div>
       );
     }
 
@@ -227,20 +287,27 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
       <Navbar
-        parliaments={parliaments}
-        periods={periods}
-        selectedParliament={selectedParliament}
-        selectedPeriod={selectedPeriod}
-        loading={loadingNav}
-        onParliamentChange={handleParliamentChange}
-        onPeriodChange={handlePeriodChange}
+        onHome={goHome}
+        onSearchOpen={() => setSearchOpen(true)}
         breadcrumb={buildBreadcrumb()}
       />
-      <main>
+      {searchOpen && (
+        <SearchOverlay
+          isOpen={searchOpen}
+          onClose={() => setSearchOpen(false)}
+          onSelectPoll={(poll) => {
+            navigate({ page: 'vote', poll, parliament: DUMMY_PARLIAMENT, period: DUMMY_PERIOD });
+          }}
+          onSelectMandate={(mandateId, name) => {
+            navigate({ page: 'member', mandateId, mandateName: name, fractionName: '', parliament: DUMMY_PARLIAMENT, period: DUMMY_PERIOD });
+          }}
+        />
+      )}
+      <div className="flex-1 flex flex-col">
         {renderView()}
-      </main>
+      </div>
     </div>
   );
 }
