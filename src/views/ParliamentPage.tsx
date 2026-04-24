@@ -133,10 +133,10 @@ export function ParliamentPage({
               href={config.kofiUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+              className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 hover:border-amber-300 transition-colors"
               title="Projekt unterstützen"
             >
-              <Heart className="w-4 h-4 flex-shrink-0" />
+              <Heart className="w-4 h-4 flex-shrink-0 text-amber-500" />
               <span>Projekt unterstützen</span>
             </a>
           </div>
