@@ -267,7 +267,24 @@ export const api = {
       sort_by: 'parliament_period',
       sort_direction: 'desc',
     });
-    return res.data;
+    if (res.data.length > 0) return res.data;
+
+    // AW API quirk: some politicians (e.g. ministers, party leaders) are not indexed
+    // by politician ID alone — the endpoint returns 0 results unless parliament_period
+    // is also supplied. Fall back to checking the most recent known Bundestag periods.
+    const FALLBACK_PERIOD_IDS = [161, 132, 111, 97]; // BTW 2025, 2021, 2017, 2013
+    const results: CandidacyMandate[] = [];
+    for (const periodId of FALLBACK_PERIOD_IDS) {
+      const r = await get<APIResponse<CandidacyMandate>>('/candidacies-mandates', {
+        politician: politicianId,
+        parliament_period: periodId,
+      }).catch(() => ({ data: [] as CandidacyMandate[] }));
+      for (const m of r.data) {
+        if (!results.find((x) => x.id === m.id)) results.push(m);
+      }
+      if (results.length >= rangeEnd) break;
+    }
+    return results.slice(0, rangeEnd);
   },
 
   /**
