@@ -39,32 +39,6 @@ function fmt(n: number) {
 }
 
 export function DonationsTab({ onSelectFraction: _onSelectFraction }: DonationsTabProps) {
-  // Privacy mode: show no donor data at all
-  if (config.privacyMode) {
-    return (
-      <div className="max-w-5xl mx-auto px-4 py-16 flex flex-col items-center justify-center text-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
-          <Lock className="w-6 h-6 text-slate-400" />
-        </div>
-        <div>
-          <p className="font-semibold text-slate-700">Datenschutzmodus aktiv</p>
-          <p className="text-sm text-slate-400 mt-1 max-w-sm">
-            Spenderdaten werden aus Datenschutzgründen nicht geladen.
-            Zum Aktivieren <code className="text-xs bg-slate-100 px-1 rounded">VITE_PRIVACY_MODE=false</code> setzen.
-          </p>
-        </div>
-        <a
-          href="https://www.bundestag.de/parlament/praesidium/parteienfinanzierung/fundstellen50000"
-          target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 mt-2"
-        >
-          <ExternalLink className="w-3 h-3" />
-          Quellseite Bundestag
-        </a>
-      </div>
-    );
-  }
-
   const [manifest, setManifest] = useState<DonationsManifest | null>(null);
   const [loadedData, setLoadedData] = useState<Record<number, Donation[]>>({});
   const [loadingYears, setLoadingYears] = useState<Set<number>>(new Set());
@@ -281,6 +255,14 @@ export function DonationsTab({ onSelectFraction: _onSelectFraction }: DonationsT
       )}
 
       {/* Table */}
+      {config.privacyMode ? (
+        <div className="bg-white rounded-xl border border-slate-200 p-6 mb-4 flex items-center gap-3 text-slate-500">
+          <Lock className="w-4 h-4 text-slate-400 shrink-0" />
+          <span className="text-sm">
+            Einzelspender werden im Datenschutzmodus nicht angezeigt.
+          </span>
+        </div>
+      ) : (
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden mb-4">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -348,10 +330,11 @@ export function DonationsTab({ onSelectFraction: _onSelectFraction }: DonationsT
           <div className="text-center py-4 text-slate-400 text-sm">Daten werden geladen…</div>
         )}
       </div>
+      )}
 
       <p className="text-xs text-slate-400">
         Quelle: Bundestag.de · §25 Abs. 3 Parteiengesetz · Jahresattribution nach Eingang der Spende
-        {config.privacyMode && ' · Privatpersonen werden anonymisiert dargestellt'}
+        {config.privacyMode && ' · Einzelspender werden im Datenschutzmodus ausgeblendet'}
       </p>
     </div>
   );
