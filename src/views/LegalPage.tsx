@@ -1,4 +1,5 @@
 import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
 import impressumMd from '../legal/impressum.md?raw';
 import datenschutzMd from '../legal/datenschutz.md?raw';
 
@@ -28,6 +29,7 @@ export function LegalPage({ view, onBack }: LegalPageProps) {
 
       <article className="prose prose-slate max-w-none">
         <ReactMarkdown
+          remarkPlugins={[remarkBreaks]}
           components={{
             h1: ({ children }) => (
               <h1 className="text-2xl font-bold text-slate-900 mb-6 pb-3 border-b border-slate-200">
@@ -66,12 +68,6 @@ export function LegalPage({ view, onBack }: LegalPageProps) {
           {content}
         </ReactMarkdown>
       </article>
-
-      <div className="mt-10 pt-6 border-t border-slate-200 text-xs text-slate-400 text-center">
-        <p>
-          Die mit <strong className="text-slate-500">[…]</strong> markierten Felder müssen durch den Betreiber mit den tatsächlichen Angaben ausgefüllt werden.
-        </p>
-      </div>
     </div>
   );
 }
