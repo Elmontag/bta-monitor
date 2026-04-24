@@ -1,0 +1,1367 @@
+{
+  "year": 2025,
+  "count": 170,
+  "lastUpdated": "2026-04-24",
+  "donations": [
+    {
+      "id": "2025-001",
+      "date": "2025-12-23",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 136000,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-002",
+      "date": "2025-12-22",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 80000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-003",
+      "date": "2025-12-18",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 80000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-004",
+      "date": "2025-12-17",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-005",
+      "date": "2025-12-12",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-006",
+      "date": "2025-12-12",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 75000,
+      "category": "Stiftung"
+    },
+    {
+      "id": "2025-007",
+      "date": "2025-12-12",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-008",
+      "date": "2025-12-10",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45960,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-009",
+      "date": "2025-12-09",
+      "year": 2025,
+      "party": "AfD",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-010",
+      "date": "2025-12-07",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 40000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-011",
+      "date": "2025-11-30",
+      "year": 2025,
+      "party": "Todenhöfer",
+      "amount": 116401,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-012",
+      "date": "2025-11-27",
+      "year": 2025,
+      "party": "Volt",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-013",
+      "date": "2025-11-26",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-014",
+      "date": "2025-11-19",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-015",
+      "date": "2025-11-19",
+      "year": 2025,
+      "party": "BSW",
+      "amount": 35110,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-016",
+      "date": "2025-11-19",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 95000,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-017",
+      "date": "2025-11-17",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-018",
+      "date": "2025-11-11",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 500000,
+      "category": "Stiftung"
+    },
+    {
+      "id": "2025-019",
+      "date": "2025-11-05",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45979,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-020",
+      "date": "2025-10-29",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-021",
+      "date": "2025-10-29",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 75000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-022",
+      "date": "2025-10-24",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-023",
+      "date": "2025-10-23",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-024",
+      "date": "2025-10-21",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-025",
+      "date": "2025-10-15",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 40000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-026",
+      "date": "2025-10-14",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 200000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-027",
+      "date": "2025-10-10",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45973,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-028",
+      "date": "2025-10-07",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 75000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-029",
+      "date": "2025-10-01",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 50000,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-030",
+      "date": "2025-09-12",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 36000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-031",
+      "date": "2025-09-11",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45981,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-032",
+      "date": "2025-09-04",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-033",
+      "date": "2025-09-02",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-034",
+      "date": "2025-08-07",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 46001,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-035",
+      "date": "2025-08-07",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-036",
+      "date": "2025-07-29",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-037",
+      "date": "2025-07-08",
+      "year": 2025,
+      "party": "AfD",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-038",
+      "date": "2025-07-07",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-039",
+      "date": "2025-07-03",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-040",
+      "date": "2025-06-30",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 46007,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-041",
+      "date": "2025-06-25",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 46017,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-042",
+      "date": "2025-06-12",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 93000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-043",
+      "date": "2025-05-27",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 75000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-044",
+      "date": "2025-05-23",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 40000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-045",
+      "date": "2025-05-22",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45907,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-046",
+      "date": "2025-05-19",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-047",
+      "date": "2025-04-29",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45988,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-048",
+      "date": "2025-04-11",
+      "year": 2025,
+      "party": "DKP",
+      "amount": 40000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-049",
+      "date": "2025-04-07",
+      "year": 2025,
+      "party": "BSW",
+      "amount": 2048445,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-050",
+      "date": "2025-03-17",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 119619,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-051",
+      "date": "2025-03-07",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 46019,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-052",
+      "date": "2025-03-04",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-053",
+      "date": "2025-02-25",
+      "year": 2025,
+      "party": "AfD",
+      "amount": 58750,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-054",
+      "date": "2025-02-25",
+      "year": 2025,
+      "party": "Freie Wähler",
+      "amount": 60000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-055",
+      "date": "2025-02-24",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-056",
+      "date": "2025-02-24",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 141997,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-057",
+      "date": "2025-02-21",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 75000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-058",
+      "date": "2025-02-19",
+      "year": 2025,
+      "party": "AfD",
+      "amount": 150000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-059",
+      "date": "2025-02-18",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-060",
+      "date": "2025-02-18",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 75000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-061",
+      "date": "2025-02-18",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-062",
+      "date": "2025-02-17",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 70000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-063",
+      "date": "2025-02-17",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 75000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-064",
+      "date": "2025-02-15",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 56859,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-065",
+      "date": "2025-02-14",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-066",
+      "date": "2025-02-14",
+      "year": 2025,
+      "party": "SPD",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-067",
+      "date": "2025-02-14",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 200000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-068",
+      "date": "2025-02-12",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-069",
+      "date": "2025-02-12",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-070",
+      "date": "2025-02-11",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-071",
+      "date": "2025-02-11",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-072",
+      "date": "2025-02-10",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 40000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-073",
+      "date": "2025-02-10",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 75000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-074",
+      "date": "2025-02-10",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-075",
+      "date": "2025-02-06",
+      "year": 2025,
+      "party": "SPD",
+      "amount": 1500000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-076",
+      "date": "2025-02-06",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-077",
+      "date": "2025-02-06",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-078",
+      "date": "2025-02-05",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 40000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-079",
+      "date": "2025-02-04",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-080",
+      "date": "2025-02-04",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-081",
+      "date": "2025-02-03",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-082",
+      "date": "2025-02-01",
+      "year": 2025,
+      "party": "AfD",
+      "amount": 2349907,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-083",
+      "date": "2025-01-31",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 46003,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-084",
+      "date": "2025-01-31",
+      "year": 2025,
+      "party": "Volt",
+      "amount": 75000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-085",
+      "date": "2025-01-31",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-086",
+      "date": "2025-01-31",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-087",
+      "date": "2025-01-31",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-088",
+      "date": "2025-01-31",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-089",
+      "date": "2025-01-30",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-090",
+      "date": "2025-01-29",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 275000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-091",
+      "date": "2025-01-28",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 200000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-092",
+      "date": "2025-01-28",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 35001,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-093",
+      "date": "2025-01-27",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 60000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-094",
+      "date": "2025-01-27",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 60000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-095",
+      "date": "2025-01-27",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-096",
+      "date": "2025-01-27",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-097",
+      "date": "2025-01-27",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 255000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-098",
+      "date": "2025-01-27",
+      "year": 2025,
+      "party": "SPD",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-099",
+      "date": "2025-01-27",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-100",
+      "date": "2025-01-24",
+      "year": 2025,
+      "party": "BSW",
+      "amount": 52201,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-101",
+      "date": "2025-01-23",
+      "year": 2025,
+      "party": "Linke",
+      "amount": 300000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-102",
+      "date": "2025-01-23",
+      "year": 2025,
+      "party": "AfD",
+      "amount": 999990,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-103",
+      "date": "2025-01-23",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-104",
+      "date": "2025-01-23",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-105",
+      "date": "2025-01-23",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 200000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-106",
+      "date": "2025-01-23",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 200000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-107",
+      "date": "2025-01-22",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 46006,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-108",
+      "date": "2025-01-21",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-109",
+      "date": "2025-01-21",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-110",
+      "date": "2025-01-21",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-111",
+      "date": "2025-01-21",
+      "year": 2025,
+      "party": "SPD",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-112",
+      "date": "2025-01-21",
+      "year": 2025,
+      "party": "AfD",
+      "amount": 1500000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-113",
+      "date": "2025-01-21",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-114",
+      "date": "2025-01-21",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 80020,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-115",
+      "date": "2025-01-20",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-116",
+      "date": "2025-01-20",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-117",
+      "date": "2025-01-20",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-118",
+      "date": "2025-01-17",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 500000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-119",
+      "date": "2025-01-17",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-120",
+      "date": "2025-01-17",
+      "year": 2025,
+      "party": "Freie Wähler",
+      "amount": 52000,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-121",
+      "date": "2025-01-17",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 132000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-122",
+      "date": "2025-01-17",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 40000,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-123",
+      "date": "2025-01-16",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 272000,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-124",
+      "date": "2025-01-15",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 500000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-125",
+      "date": "2025-01-15",
+      "year": 2025,
+      "party": "SPD",
+      "amount": 500000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-126",
+      "date": "2025-01-15",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-127",
+      "date": "2025-01-15",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 250000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-128",
+      "date": "2025-01-15",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 500000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-129",
+      "date": "2025-01-15",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 40000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-130",
+      "date": "2025-01-14",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 40000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-131",
+      "date": "2025-01-14",
+      "year": 2025,
+      "party": "SPD",
+      "amount": 50000,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-132",
+      "date": "2025-01-14",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-133",
+      "date": "2025-01-13",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-134",
+      "date": "2025-01-13",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-135",
+      "date": "2025-01-13",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-136",
+      "date": "2025-01-13",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 150000,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-137",
+      "date": "2025-01-10",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-138",
+      "date": "2025-01-07",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-139",
+      "date": "2025-01-07",
+      "year": 2025,
+      "party": "CSU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-140",
+      "date": "2025-01-07",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 40000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-141",
+      "date": "2025-01-06",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 75000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-142",
+      "date": "2025-01-06",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 165000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-143",
+      "date": "2025-01-06",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 500000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-144",
+      "date": "2025-01-06",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-145",
+      "date": "2025-01-06",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-146",
+      "date": "2025-01-03",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-147",
+      "date": "2025-01-03",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 40000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-148",
+      "date": "2025-01-03",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-149",
+      "date": "2025-01-03",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-150",
+      "date": "2025-01-03",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-151",
+      "date": "2025-01-02",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 37500,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-152",
+      "date": "2025-01-02",
+      "year": 2025,
+      "party": "FDP",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-153",
+      "date": "2025-01-02",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-154",
+      "date": "2024-12-30",
+      "year": 2025,
+      "party": "SPD",
+      "amount": 90000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-155",
+      "date": "2024-12-30",
+      "year": 2025,
+      "party": "Grüne",
+      "amount": 35001,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-156",
+      "date": "2024-12-30",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-157",
+      "date": "2024-12-27",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 167000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-158",
+      "date": "2024-12-10",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2025-159",
+      "date": "2024-12-05",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45178,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-160",
+      "date": "2024-11-07",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45183,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-161",
+      "date": "2024-10-07",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45177,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-162",
+      "date": "2024-09-16",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45147,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-163",
+      "date": "2024-08-27",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45048,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-164",
+      "date": "2024-08-27",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45048,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-165",
+      "date": "2024-08-27",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45048,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-166",
+      "date": "2024-08-27",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45048,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-167",
+      "date": "2024-08-27",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45048,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-168",
+      "date": "2024-04-26",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 40000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2025-169",
+      "date": "2024-03-05",
+      "year": 2025,
+      "party": "SSW",
+      "amount": 45202,
+      "category": "Verband"
+    },
+    {
+      "id": "2025-170",
+      "date": "",
+      "year": 2025,
+      "party": "CDU",
+      "amount": 180000,
+      "category": "Unternehmen"
+    }
+  ]
+}

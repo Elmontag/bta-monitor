@@ -1,0 +1,695 @@
+{
+  "year": 2021,
+  "count": 86,
+  "lastUpdated": "2026-04-24",
+  "donations": [
+    {
+      "id": "2021-001",
+      "date": "2021-12-22",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 50001,
+      "category": "Verband"
+    },
+    {
+      "id": "2021-002",
+      "date": "2021-12-22",
+      "year": 2021,
+      "party": "CSU",
+      "amount": 750000,
+      "category": "Verband"
+    },
+    {
+      "id": "2021-003",
+      "date": "2021-12-22",
+      "year": 2021,
+      "party": "SPD",
+      "amount": 50001,
+      "category": "Verband"
+    },
+    {
+      "id": "2021-004",
+      "date": "2021-12-22",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 120000,
+      "category": "Verband"
+    },
+    {
+      "id": "2021-005",
+      "date": "2021-10-27",
+      "year": 2021,
+      "party": "SSW",
+      "amount": 124260,
+      "category": "Verband"
+    },
+    {
+      "id": "2021-006",
+      "date": "2021-10-12",
+      "year": 2021,
+      "party": "MLPD",
+      "amount": 52000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-007",
+      "date": "2021-09-22",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 300000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-008",
+      "date": "2021-09-17",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 250000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-009",
+      "date": "2021-09-17",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 250000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-010",
+      "date": "2021-09-17",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 50001,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-011",
+      "date": "2021-09-17",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 50001,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-012",
+      "date": "2021-09-16",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-013",
+      "date": "2021-09-15",
+      "year": 2021,
+      "party": "Freie Wähler",
+      "amount": 89000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-014",
+      "date": "2021-09-14",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 51000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-015",
+      "date": "2021-09-14",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 200000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-016",
+      "date": "2021-09-13",
+      "year": 2021,
+      "party": "SPD",
+      "amount": 75000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-017",
+      "date": "2021-09-07",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 1250000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-018",
+      "date": "2021-09-03",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 52000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-019",
+      "date": "2021-09-03",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 250000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-020",
+      "date": "2021-09-02",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-021",
+      "date": "2021-09-02",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-022",
+      "date": "2021-08-31",
+      "year": 2021,
+      "party": "MLPD",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-023",
+      "date": "2021-08-26",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-024",
+      "date": "2021-08-25",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 250000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-025",
+      "date": "2021-08-24",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-026",
+      "date": "2021-08-24",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-027",
+      "date": "2021-08-24",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 60000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-028",
+      "date": "2021-08-20",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-029",
+      "date": "2021-08-18",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-030",
+      "date": "2021-08-18",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-031",
+      "date": "2021-08-18",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-032",
+      "date": "2021-08-17",
+      "year": 2021,
+      "party": "SPD",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-033",
+      "date": "2021-08-16",
+      "year": 2021,
+      "party": "dieBasis",
+      "amount": 59271,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-034",
+      "date": "2021-08-13",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 250000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-035",
+      "date": "2021-08-13",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-036",
+      "date": "2021-08-13",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-037",
+      "date": "2021-08-02",
+      "year": 2021,
+      "party": "Linke",
+      "amount": 55000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-038",
+      "date": "2021-07-29",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 51000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-039",
+      "date": "2021-07-23",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 75000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-040",
+      "date": "2021-07-23",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 75000,
+      "category": "Verband"
+    },
+    {
+      "id": "2021-041",
+      "date": "2021-07-21",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 51000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-042",
+      "date": "2021-07-16",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-043",
+      "date": "2021-07-15",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 75000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-044",
+      "date": "2021-07-13",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 300000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-045",
+      "date": "2021-07-09",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-046",
+      "date": "2021-07-09",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 300000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-047",
+      "date": "2021-07-07",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 200000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-048",
+      "date": "2021-07-07",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 150000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-049",
+      "date": "2021-07-02",
+      "year": 2021,
+      "party": "CSU",
+      "amount": 121381,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-050",
+      "date": "2021-07-01",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 50001,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-051",
+      "date": "2021-07-01",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 50001,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-052",
+      "date": "2021-06-30",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 51000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-053",
+      "date": "2021-06-29",
+      "year": 2021,
+      "party": "SSW",
+      "amount": 124300,
+      "category": "Verband"
+    },
+    {
+      "id": "2021-054",
+      "date": "2021-06-25",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-055",
+      "date": "2021-06-25",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-056",
+      "date": "2021-06-24",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 50001,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-057",
+      "date": "2021-06-24",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 50000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-058",
+      "date": "2021-06-24",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 70000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-059",
+      "date": "2021-06-22",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-060",
+      "date": "2021-06-18",
+      "year": 2021,
+      "party": "Die PARTEI",
+      "amount": 280007,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-061",
+      "date": "2021-06-17",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 51000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-062",
+      "date": "2021-06-14",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 68548,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-063",
+      "date": "2021-06-14",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 431452,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-064",
+      "date": "2021-06-09",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 500000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-065",
+      "date": "2021-05-27",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Verband"
+    },
+    {
+      "id": "2021-066",
+      "date": "2021-05-24",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-067",
+      "date": "2021-05-17",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 200000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-068",
+      "date": "2021-05-14",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-069",
+      "date": "2021-05-07",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 60000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-070",
+      "date": "2021-04-29",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 750000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-071",
+      "date": "2021-04-27",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 70000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-072",
+      "date": "2021-04-13",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 60000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2021-073",
+      "date": "2021-04-12",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 1000000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-074",
+      "date": "2021-04-07",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 51000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-075",
+      "date": "2021-03-31",
+      "year": 2021,
+      "party": "SSW",
+      "amount": 124292,
+      "category": "Verband"
+    },
+    {
+      "id": "2021-076",
+      "date": "2021-03-17",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 52000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-077",
+      "date": "2021-03-09",
+      "year": 2021,
+      "party": "FDP",
+      "amount": 50001,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-078",
+      "date": "2021-02-24",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-079",
+      "date": "2021-02-23",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 50001,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-080",
+      "date": "2021-02-22",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 70000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-081",
+      "date": "2021-02-17",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 60000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-082",
+      "date": "2021-02-15",
+      "year": 2021,
+      "party": "Grüne",
+      "amount": 500000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-083",
+      "date": "2021-02-01",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-084",
+      "date": "2021-01-21",
+      "year": 2021,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2021-085",
+      "date": "2021-01-08",
+      "year": 2021,
+      "party": "SSW",
+      "amount": 124569,
+      "category": "Verband"
+    },
+    {
+      "id": "2021-086",
+      "date": "2020-12-30",
+      "year": 2021,
+      "party": "dieBasis",
+      "amount": 60000,
+      "category": "Unternehmen"
+    }
+  ]
+}

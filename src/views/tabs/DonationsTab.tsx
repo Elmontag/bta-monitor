@@ -9,7 +9,7 @@ interface Donation {
   date: string;
   year: number;
   party: string;
-  donor: string;
+  donor?: string;  // absent in anonymised .anon.json (Privacy Mode ON)
   amount: number;
   category: 'Unternehmen' | 'Privatperson' | 'Verband' | 'Stiftung';
 }
@@ -66,8 +66,11 @@ export function DonationsTab({ onSelectFraction: _onSelectFraction }: DonationsT
   async function loadYear(year: number) {
     if (loadedData[year] !== undefined || loadingYears.has(year)) return;
     setLoadingYears((s) => new Set(s).add(year));
+    // Privacy mode: fetch anonymised file (no donor names) — safe to serve from GitHub Pages
+    // Privacy off:  fetch full file (with donor names) — only available via Docker
+    const suffix = config.privacyMode ? '.anon.json' : '.json';
     try {
-      const res = await fetch(`${import.meta.env.BASE_URL}data/donations/${year}.json`);
+      const res = await fetch(`${import.meta.env.BASE_URL}data/donations/${year}${suffix}`);
       const json = await res.json();
       setLoadedData((prev) => ({ ...prev, [year]: json.donations }));
     } finally {

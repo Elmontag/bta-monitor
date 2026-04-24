@@ -3,12 +3,12 @@ Generate per-year donation JSON files from scraped Bundestag data.
 
 Run: python generate_donations_ts.py
 Output:
-  public/data/donations/YYYY.json  (one per year)
-  public/data/donations/manifest.json
+  public/data/donations/YYYY.json       (full data incl. donor names — gitignored)
+  public/data/donations/YYYY.anon.json  (anonymised, no donor names — committed)
+  public/data/donations/manifest.json   (years index — committed)
 
-NOTE: Output files contain donor names and are gitignored.
-      Do NOT commit them. They are served at runtime by the cache-service (Docker)
-      or populated locally for development only.
+The anonymised files power the charts/filters on GitHub Pages (Privacy Mode ON).
+The full files are used by Docker (Privacy Mode OFF) to also show the donor table.
 """
 import requests, json, re, os
 from bs4 import BeautifulSoup
@@ -241,6 +241,7 @@ json_dir = os.path.join(os.path.dirname(__file__), 'public', 'data', 'donations'
 os.makedirs(json_dir, exist_ok=True)
 
 for yr, entries in sorted(grouped.items(), reverse=True):
+    # Full data (contains donor names — gitignored)
     path = os.path.join(json_dir, f"{yr}.json")
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(
@@ -248,6 +249,19 @@ for yr, entries in sorted(grouped.items(), reverse=True):
              'donations': entries},
             f, ensure_ascii=False, indent=2)
     print(f"Written {path}  ({len(entries)} entries)")
+
+    # Anonymised data (no donor names — safe to commit)
+    anon_entries = [
+        {k: v for k, v in e.items() if k != 'donor'}
+        for e in entries
+    ]
+    anon_path = os.path.join(json_dir, f"{yr}.anon.json")
+    with open(anon_path, 'w', encoding='utf-8') as f:
+        json.dump(
+            {'year': yr, 'count': len(anon_entries), 'lastUpdated': today,
+             'donations': anon_entries},
+            f, ensure_ascii=False, indent=2)
+    print(f"Written {anon_path}  ({len(anon_entries)} entries, anonymised)")
 
 manifest = {
     'years': sorted(grouped.keys(), reverse=True),
@@ -259,4 +273,4 @@ with open(manifest_path, 'w', encoding='utf-8') as f:
     json.dump(manifest, f, ensure_ascii=False, indent=2)
 print(f"Written {manifest_path}  (years: {manifest['years']})")
 print(f"\nTotal (no dedup): {len(all_raw)} entries across all years")
-print("NOTE: These files are gitignored. Do not commit them.")
+print("NOTE: *.json files (with donor names) are gitignored. *.anon.json and manifest.json are safe to commit.")

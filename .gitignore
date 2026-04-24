@@ -28,7 +28,8 @@ donations_all.json
 donations_final.json
 build.log
 
-# Donation data — contains personal data, generated locally or by cache-service at runtime
-# Do NOT commit these files. Run generate_donations_ts.py or start Docker to populate them.
-public/data/donations/
+# Donation full data — contains donor names (personal data), never commit
+# Generated locally via generate_donations_ts.py or by Docker cache-service at runtime.
+# Anonymised *.anon.json and manifest.json (no personal data) ARE committed.
+public/data/donations/[0-9]*.json
 src/data/donations.ts

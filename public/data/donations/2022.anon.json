@@ -1,0 +1,183 @@
+{
+  "year": 2022,
+  "count": 22,
+  "lastUpdated": "2026-04-24",
+  "donations": [
+    {
+      "id": "2022-001",
+      "date": "",
+      "year": 2022,
+      "party": "Todenhöfer",
+      "amount": 1751132,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-002",
+      "date": "",
+      "year": 2022,
+      "party": "SPD",
+      "amount": 50001,
+      "category": "Verband"
+    },
+    {
+      "id": "2022-003",
+      "date": "",
+      "year": 2022,
+      "party": "FDP",
+      "amount": 50001,
+      "category": "Verband"
+    },
+    {
+      "id": "2022-004",
+      "date": "",
+      "year": 2022,
+      "party": "CSU",
+      "amount": 350000,
+      "category": "Verband"
+    },
+    {
+      "id": "2022-005",
+      "date": "",
+      "year": 2022,
+      "party": "Volt",
+      "amount": 50001,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2022-006",
+      "date": "",
+      "year": 2022,
+      "party": "CDU",
+      "amount": 50050,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-007",
+      "date": "",
+      "year": 2022,
+      "party": "DKP",
+      "amount": 270255,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-008",
+      "date": "",
+      "year": 2022,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-009",
+      "date": "",
+      "year": 2022,
+      "party": "CDU",
+      "amount": 55000,
+      "category": "Verband"
+    },
+    {
+      "id": "2022-010",
+      "date": "",
+      "year": 2022,
+      "party": "SSW",
+      "amount": 125602,
+      "category": "Verband"
+    },
+    {
+      "id": "2022-011",
+      "date": "",
+      "year": 2022,
+      "party": "SSW",
+      "amount": 125782,
+      "category": "Verband"
+    },
+    {
+      "id": "2022-012",
+      "date": "",
+      "year": 2022,
+      "party": "CDU",
+      "amount": 50001,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-013",
+      "date": "",
+      "year": 2022,
+      "party": "CDU",
+      "amount": 50001,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-014",
+      "date": "",
+      "year": 2022,
+      "party": "Grüne",
+      "amount": 50001,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2022-015",
+      "date": "",
+      "year": 2022,
+      "party": "Grüne",
+      "amount": 65000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-016",
+      "date": "",
+      "year": 2022,
+      "party": "Grüne",
+      "amount": 75001,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-017",
+      "date": "",
+      "year": 2022,
+      "party": "CDU",
+      "amount": 65000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-018",
+      "date": "",
+      "year": 2022,
+      "party": "SSW",
+      "amount": 125572,
+      "category": "Verband"
+    },
+    {
+      "id": "2022-019",
+      "date": "",
+      "year": 2022,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-020",
+      "date": "",
+      "year": 2022,
+      "party": "CDU",
+      "amount": 100000,
+      "category": "Unternehmen"
+    },
+    {
+      "id": "2022-021",
+      "date": "",
+      "year": 2022,
+      "party": "DKP",
+      "amount": 80000,
+      "category": "Privatperson"
+    },
+    {
+      "id": "2022-022",
+      "date": "",
+      "year": 2022,
+      "party": "SSW",
+      "amount": 125506,
+      "category": "Verband"
+    }
+  ]
+}
