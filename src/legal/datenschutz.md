@@ -75,7 +75,7 @@ Als betroffene Person haben Sie gemäß DSGVO folgende Rechte:
 - **Recht auf Datenübertragbarkeit** (Art. 20 DSGVO)
 - **Beschwerderecht** bei einer Datenschutz-Aufsichtsbehörde (Art. 77 DSGVO)
 
-Für Anfragen zu Ihren Rechten wenden Sie sich an: **[ihre@email.de]**
+Für Anfragen zu Ihren Rechten wenden Sie sich an: **[ludwig@die-montags.eu]**
 
 ## 8. Zuständige Aufsichtsbehörde
 

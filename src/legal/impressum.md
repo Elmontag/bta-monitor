@@ -9,7 +9,7 @@ In den Benden 5
 53894 Mechernich
 Deutschland
 
-**E-Mail:** ludwig@die-montags.eu
+**E-Mail:** [ludwig@die-montags.eu]
 
 ## Verantwortlich für den Inhalt
 
