@@ -1,22 +1,27 @@
+import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { ChevronLeft, Vote, Users, User, Banknote, ChartBar, LayoutDashboard } from 'lucide-react';
+import { Vote, Users, User, Banknote, TrendingUp, LayoutDashboard, Menu, X, Heart } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { Parliament, ParliamentPeriod } from '../types/api';
+import { config } from '../config';
 
 export type ParliamentTab = 'overview' | 'votes' | 'fractions' | 'members' | 'donations' | 'polls';
 
-function getTabsForParliament(parliamentId: number): Array<{ id: ParliamentTab; label: string; icon: LucideIcon }> {
-  const base: Array<{ id: ParliamentTab; label: string; icon: LucideIcon }> = [
-    { id: 'overview', label: 'Übersicht', icon: LayoutDashboard },
-    { id: 'votes', label: 'Abstimmungen', icon: Vote },
-    { id: 'fractions', label: 'Fraktionen', icon: Users },
-    { id: 'members', label: 'Abgeordnete', icon: User },
-    { id: 'polls', label: 'Umfragen', icon: ChartBar },
+interface TabDef { id: ParliamentTab; label: string; icon: LucideIcon; periodIndependent?: boolean }
+
+function getTabsForParliament(parliamentId: number): TabDef[] {
+  const periodTabs: TabDef[] = [
+    { id: 'overview',   label: 'Übersicht',    icon: LayoutDashboard },
+    { id: 'votes',      label: 'Abstimmungen', icon: Vote            },
+    { id: 'fractions',  label: 'Fraktionen',   icon: Users           },
+    { id: 'members',    label: 'Abgeordnete',  icon: User            },
   ];
+  const independentTabs: TabDef[] = [];
   if (parliamentId === 5) {
-    base.splice(4, 0, { id: 'donations', label: 'Spenden', icon: Banknote });
+    independentTabs.push({ id: 'donations', label: 'Spenden', icon: Banknote, periodIndependent: true });
   }
-  return base;
+  independentTabs.push({ id: 'polls', label: 'Umfragen', icon: TrendingUp, periodIndependent: true });
+  return [...periodTabs, ...independentTabs];
 }
 
 interface ParliamentPageProps {
@@ -32,87 +37,115 @@ interface ParliamentPageProps {
 
 export function ParliamentPage({
   parliament,
-  period,
-  periods,
+  period: _period,
+  periods: _periods,
   tab,
-  onHome,
-  onPeriodChange,
+  onPeriodChange: _onPeriodChange,
   onTabChange,
   children,
 }: ParliamentPageProps) {
   const tabs = getTabsForParliament(parliament.id);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex flex-1 min-h-0">
-      {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col">
-        <div className="p-4 border-b border-slate-100">
-          <button
-            onClick={onHome}
-            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors mb-3"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Zur Übersicht
-          </button>
-          <h2 className="text-base font-bold text-slate-900 leading-tight">
-            {parliament.label_external_long ?? parliament.label}
-          </h2>
-        </div>
+    <div className="flex flex-col flex-1 min-h-0">
 
-        <div className="flex-1 overflow-y-auto p-4">
-          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Legislaturperioden</div>
-          {periods.length === 0 ? (
-            <div className="space-y-2">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-8 bg-slate-100 rounded-lg animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-1">
-              {periods.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => onPeriodChange(p)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                    period.id === p.id
-                      ? 'bg-blue-600 text-white font-medium'
-                      : 'text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </aside>
+      {/* ── Main layout: Sidebar + Content ───────────────────────────── */}
+      <div className="flex flex-1 min-h-0 relative">
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Tab bar */}
-        <div className="bg-white border-b border-slate-200 px-4 sticky top-0 z-10">
-          <div className="flex gap-1 overflow-x-auto">
-            {tabs.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => onTabChange(id)}
-                className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors -mb-px ${
-                  tab === id
-                    ? 'text-blue-600 border-blue-600'
-                    : 'text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {label}
-              </button>
-            ))}
+        {/* Sidebar overlay (mobile) */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/20 z-20 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Mobile sidebar toggle — now lives beside the breadcrumb row */}
+        <button
+          className="md:hidden fixed bottom-4 left-4 z-40 p-3 bg-white rounded-full shadow-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
+          onClick={() => setSidebarOpen((v) => !v)}
+          aria-label="Menü"
+        >
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+
+        {/* Sidebar */}
+        <aside
+          className={`
+            flex-shrink-0 w-52 bg-white border-r border-slate-200 flex flex-col z-30
+            md:relative md:translate-x-0 md:flex
+            absolute inset-y-0 left-0 transition-transform duration-200
+            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          `}
+        >
+          <nav className="flex-1 p-3">
+            {/* Period-relevant tabs */}
+            <div className="space-y-0.5">
+              {tabs.filter((t) => !t.periodIndependent).map(({ id, label, icon: Icon }) => {
+                const active = tab === id;
+                return (
+                  <button
+                    key={id}
+                    onClick={() => { onTabChange(id); setSidebarOpen(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      active ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 flex-shrink-0 ${active ? 'text-blue-600' : 'text-slate-400'}`} />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Separator */}
+            <div className="mt-3 mb-2 px-1">
+              <div className="border-t border-slate-100" />
+              <p className="mt-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-2">
+                Zeitraumunabhängig
+              </p>
+            </div>
+
+            {/* Period-independent tabs */}
+            <div className="space-y-0.5">
+              {tabs.filter((t) => t.periodIndependent).map(({ id, label, icon: Icon }) => {
+                const active = tab === id;
+                return (
+                  <button
+                    key={id}
+                    onClick={() => { onTabChange(id); setSidebarOpen(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      active ? 'bg-slate-100 text-slate-800' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 flex-shrink-0 ${active ? 'text-slate-600' : 'text-slate-400'}`} />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
+
+          {/* Ko-Fi support link at sidebar bottom */}
+          <div className="p-3 border-t border-slate-100">
+            <a
+              href={config.kofiUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+              title="Projekt unterstützen"
+            >
+              <Heart className="w-4 h-4 flex-shrink-0" />
+              <span>Projekt unterstützen</span>
+            </a>
           </div>
-        </div>
+        </aside>
 
-        {/* Tab content */}
-        <div className="flex-1 overflow-y-auto">
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto min-w-0">
           {children}
-        </div>
+        </main>
       </div>
     </div>
   );

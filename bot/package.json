@@ -1,0 +1,14 @@
+{
+  "name": "bta-bluesky-bot",
+  "version": "1.0.0",
+  "description": "BlueSky bot for bta-monitor — posts new votes, donations and survey forecasts",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "@atproto/api": "^0.13.0",
+    "axios": "^1.7.0"
+  }
+}

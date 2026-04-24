@@ -1,19 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import { api, extractLabel } from '../api/client';
-import type { Poll, CandidacyMandate } from '../types/api';
+import type { Poll, CandidacyMandate, Fraction } from '../types/api';
 
 interface SearchOverlayProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectPoll: (poll: Poll) => void;
   onSelectMandate: (mandateId: number, name: string) => void;
+  onSelectFraction: (fraction: Fraction) => void;
 }
 
-export function SearchOverlay({ isOpen, onClose, onSelectPoll, onSelectMandate }: SearchOverlayProps) {
+export function SearchOverlay({ isOpen, onClose, onSelectPoll, onSelectMandate, onSelectFraction }: SearchOverlayProps) {
   const [query, setQuery] = useState('');
   const [polls, setPolls] = useState<Poll[]>([]);
   const [mandates, setMandates] = useState<CandidacyMandate[]>([]);
+  const [fractions, setFractions] = useState<Fraction[]>([]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -24,6 +26,7 @@ export function SearchOverlay({ isOpen, onClose, onSelectPoll, onSelectMandate }
       setQuery('');
       setPolls([]);
       setMandates([]);
+      setFractions([]);
     }
   }, [isOpen]);
 
@@ -40,17 +43,20 @@ export function SearchOverlay({ isOpen, onClose, onSelectPoll, onSelectMandate }
     if (!query.trim() || query.length < 2) {
       setPolls([]);
       setMandates([]);
+      setFractions([]);
       return;
     }
     timerRef.current = setTimeout(async () => {
       setLoading(true);
       try {
-        const [pollResults, mandateResults] = await Promise.all([
-          api.searchPolls(query, 5),
-          api.searchMandates(query, 5),
+        const [pollResults, mandateResults, fractionResults] = await Promise.all([
+          api.searchPolls(query, 8),
+          api.searchMandates(query, 10),
+          api.searchFractions(query, 8),
         ]);
         setPolls(pollResults);
         setMandates(mandateResults);
+        setFractions(fractionResults);
       } catch {
         // ignore search errors
       } finally {
@@ -62,7 +68,7 @@ export function SearchOverlay({ isOpen, onClose, onSelectPoll, onSelectMandate }
 
   if (!isOpen) return null;
 
-  const hasResults = polls.length > 0 || mandates.length > 0;
+  const hasResults = polls.length > 0 || mandates.length > 0 || fractions.length > 0;
 
   return (
     <div
@@ -115,6 +121,7 @@ export function SearchOverlay({ isOpen, onClose, onSelectPoll, onSelectMandate }
                 <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wide">Abgeordnete</div>
                 {mandates.map((m) => {
                   const name = extractLabel(m.label);
+                  const periodLabel = m.parliament_period?.label ?? '';
                   return (
                     <button
                       key={m.id}
@@ -122,7 +129,31 @@ export function SearchOverlay({ isOpen, onClose, onSelectPoll, onSelectMandate }
                       className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors"
                     >
                       <div className="text-sm font-medium text-slate-800">{name}</div>
-                      <div className="text-xs text-slate-400 mt-0.5">{m.parliament_period?.label ?? ''}</div>
+                      {periodLabel && (
+                        <div className="text-xs text-slate-400 mt-0.5">{periodLabel}</div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {fractions.length > 0 && (
+              <div>
+                <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wide">Fraktionen</div>
+                {fractions.map((fraction) => {
+                  const name = extractLabel(fraction.label);
+                  const periodLabel = fraction.legislature?.label ?? '';
+                  return (
+                    <button
+                      key={fraction.id}
+                      onClick={() => { onSelectFraction(fraction); onClose(); }}
+                      className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                    >
+                      <div className="text-sm font-medium text-slate-800">{name}</div>
+                      {periodLabel && (
+                        <div className="text-xs text-slate-400 mt-0.5">{periodLabel}</div>
+                      )}
                     </button>
                   );
                 })}

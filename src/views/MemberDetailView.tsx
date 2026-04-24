@@ -1,8 +1,19 @@
 import { useState, useEffect } from 'react';
 import { api, extractLabel } from '../api/client';
-import { ExternalLink } from 'lucide-react';
-import type { Parliament, ParliamentPeriod, Poll, CandidacyMandate, MandateVote } from '../types/api';
+import { ExternalLink, ChevronLeft, Briefcase } from 'lucide-react';
+import type { Parliament, ParliamentPeriod, Poll, CandidacyMandate, MandateVote, Sidejob } from '../types/api';
 import { fractionColors, voteBadge, voteLabel } from '../utils/voteUtils';
+
+// Bundestag income level brackets (§ 44a AbgG)
+const INCOME_LEVELS: Record<string, string> = {
+  '1': '1.000 – 3.500 €',
+  '2': '3.500 – 7.000 €',
+  '3': '7.000 – 15.000 €',
+  '4': '15.000 – 30.000 €',
+  '5': '30.000 – 50.000 €',
+  '6': '50.000 – 75.000 €',
+  '7': '> 75.000 €',
+};
 
 interface MemberDetailViewProps {
   mandateId: number;
@@ -18,15 +29,20 @@ export function MemberDetailView({
   mandateId,
   mandateName,
   fractionName,
+  parliament,
   onBack,
+  onSelectPoll,
 }: MemberDetailViewProps) {
   const [mandate, setMandate] = useState<CandidacyMandate | null>(null);
   const [votes, setVotes] = useState<MandateVote[]>([]);
   const [totalVotes, setTotalVotes] = useState(0);
+  const [sidejobs, setSidejobs] = useState<Sidejob[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadingPollId, setLoadingPollId] = useState<number | null>(null);
 
   const colors = fractionColors(fractionName);
+  const isBundestag = parliament.id === 5;
 
   useEffect(() => {
     let cancelled = false;
@@ -37,12 +53,14 @@ export function MemberDetailView({
     Promise.all([
       api.getCandidacyMandate(mandateId),
       api.getMandateVotes(mandateId),
+      isBundestag ? api.getSidejobs(mandateId) : Promise.resolve({ jobs: [], total: 0 }),
     ])
-      .then(([mandateData, votesData]) => {
+      .then(([mandateData, votesData, sidejobsData]) => {
         if (!cancelled) {
           setMandate(mandateData);
           setVotes(votesData.votes);
           setTotalVotes(votesData.total);
+          setSidejobs(sidejobsData.jobs);
           setError(null);
         }
       })
@@ -54,12 +72,25 @@ export function MemberDetailView({
       });
 
     return () => { cancelled = true; };
-  }, [mandateId]);
+  }, [mandateId, isBundestag]);
 
   const noShowCount = votes.filter((v) => v.vote === 'no_show').length;
   const participationRate = votes.length > 0
     ? Math.round(((votes.length - noShowCount) / votes.length) * 100)
     : null;
+
+  async function handleVoteClick(pollId: number) {
+    if (loadingPollId != null) return;
+    setLoadingPollId(pollId);
+    try {
+      const poll = await api.getPoll(pollId);
+      onSelectPoll(poll);
+    } catch {
+      // silently ignore — external link is still available
+    } finally {
+      setLoadingPollId(null);
+    }
+  }
 
   // Fraction from mandate data (most recent membership)
   const currentFraction = mandate?.fraction_membership?.[0]?.fraction?.label
@@ -75,9 +106,7 @@ export function MemberDetailView({
         onClick={onBack}
         className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-4 transition-colors"
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
+        <ChevronLeft className="w-4 h-4" />
         Zurück
       </button>
 
@@ -168,13 +197,19 @@ export function MemberDetailView({
                   {votes.map((v) => {
                     const pollLabel = extractLabel(v.poll.label);
                     const hasUrl = !!v.poll.abgeordnetenwatch_url;
+                    const isLoadingThis = loadingPollId === v.poll.id;
 
                     return (
-                      <div key={v.id} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors">
+                      <div
+                        key={v.id}
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer"
+                        onClick={() => handleVoteClick(v.poll.id)}
+                        title="Abstimmung öffnen"
+                      >
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${voteBadge(v.vote)}`}>
                           {voteLabel(v.vote)}
                         </span>
-                        <span className="flex-1 text-sm text-slate-700 min-w-0 truncate" title={pollLabel}>
+                        <span className={`flex-1 text-sm min-w-0 truncate transition-colors ${isLoadingThis ? 'text-blue-500' : 'text-slate-700'}`} title={pollLabel}>
                           {pollLabel}
                         </span>
                         {hasUrl && (
@@ -200,6 +235,56 @@ export function MemberDetailView({
           {votes.length === 0 && (
             <div className="text-center py-10 text-slate-400 text-sm">
               Keine Abstimmungen gefunden.
+            </div>
+          )}
+
+          {/* Zuwendungen & Nebentätigkeiten (Bundestag only) */}
+          {isBundestag && sidejobs.length > 0 && (
+            <div className="mt-8">
+              <div className="flex items-center gap-2 mb-3">
+                <Briefcase className="w-4 h-4 text-slate-400" />
+                <h2 className="text-base font-semibold text-slate-800">
+                  Zuwendungen & Nebentätigkeiten
+                </h2>
+                <span className="text-sm font-normal text-slate-400 ml-1">({sidejobs.length})</span>
+              </div>
+              <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                <div className="divide-y divide-slate-100">
+                  {sidejobs.map((job) => {
+                    const org = job.sidejob_organization?.label ?? job.label;
+                    const yearExtra = job.job_title_extra;
+                    const level = job.income_level ? INCOME_LEVELS[job.income_level] : null;
+                    const exactIncome = job.income != null
+                      ? new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(job.income)
+                      : null;
+                    return (
+                      <div key={job.id} className="px-4 py-3 hover:bg-slate-50 transition-colors">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-slate-800 truncate">{org}</div>
+                            {yearExtra && (
+                              <div className="text-xs text-slate-500 mt-0.5">{yearExtra}</div>
+                            )}
+                            {job.category?.label && (
+                              <div className="text-xs text-slate-400 mt-0.5">{job.category.label}</div>
+                            )}
+                          </div>
+                          <div className="flex-shrink-0 text-right">
+                            {exactIncome ? (
+                              <span className="text-sm font-semibold text-slate-700">{exactIncome}</span>
+                            ) : level ? (
+                              <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Stufe {job.income_level}: {level}</span>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 mt-2">
+                Quelle: abgeordnetenwatch.de · Angaben nach §44a AbgG (Bundestag)
+              </p>
             </div>
           )}
         </>

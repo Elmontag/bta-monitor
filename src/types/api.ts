@@ -91,6 +91,10 @@ export interface Politician {
   id: number;
   label: string;
   abgeordnetenwatch_url?: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  occupation?: string | null;
+  party?: { id: number; label: string } | null;
 }
 
 export interface FractionMembership {
@@ -133,7 +137,26 @@ export interface MandateVote {
 export interface Fraction {
   id: number;
   label: string;
-  parliament_period: { id: number; label: string };
+  full_name: string;
+  short_name: string;
+  legislature: { id: number; label: string };
+}
+
+// Sidejob / Zuwendung from /sidejobs endpoint (Bundestag only)
+export interface Sidejob {
+  id: number;
+  label: string;
+  job_title_extra: string | null;
+  category: { id: number; label: string } | null;
+  income_level: string | null; // "1"–"7" per Bundestag disclosure brackets
+  income: number | null;
+  interval: string | null;
+  data_change_date: string;
+  sidejob_organization: { id: number; label: string } | null;
+  additional_information: string | null;
+  created: number;
+  field_city: { id: number; label: string } | null;
+  field_country: { id: number; label: string } | null;
 }
 
 // dawum.de types
@@ -153,4 +176,10 @@ export interface DawumData {
   institutes: Record<string, { Name: string }>;
   parties: Record<string, { Shortcut: string; Name: string }>;
   surveys: DawumSurvey[];
+}
+
+export interface GovernmentMember {
+  politician: Politician;
+  mandate: CandidacyMandate | null;
+  role: string;
 }

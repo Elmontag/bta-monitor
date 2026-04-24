@@ -1,0 +1,61 @@
+version: '3.9'
+
+services:
+  # ── Frontend (nginx) ───────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    volumes:
+      - cache_data:/data      # shared with cache-service
+    environment:
+      - VITE_PRIVACY_MODE=${VITE_PRIVACY_MODE:-false}
+      - VITE_KOFI_URL=${VITE_KOFI_URL:-}
+    depends_on:
+      - cache-service
+    restart: unless-stopped
+
+  # ── Cache service ─────────────────────────────────────────────────────────
+  cache-service:
+    build:
+      context: ./docker/cache-service
+      dockerfile: Dockerfile
+    volumes:
+      - cache_data:/data
+    environment:
+      - CACHE_DIR=/data/cache
+      - CACHE_SYNC_INTERVAL=${CACHE_SYNC_INTERVAL:-60}
+      - AW_API_BASE=${AW_API_BASE:-https://www.abgeordnetenwatch.de/api/v2}
+      - DAWUM_FULL_URL=${DAWUM_FULL_URL:-https://api.dawum.de/}
+      - DAWUM_NEWEST_URL=${DAWUM_NEWEST_URL:-https://api.dawum.de/newest_surveys.json}
+    restart: unless-stopped
+
+  # ── BlueSky bot (opt-in) ──────────────────────────────────────────────────
+  bluesky-bot:
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    profiles:
+      - bot                   # only starts with: docker compose --profile bot up
+    volumes:
+      - cache_data:/data
+    environment:
+      - BLUESKY_HANDLE=${BLUESKY_HANDLE}
+      - BLUESKY_APP_PASSWORD=${BLUESKY_APP_PASSWORD}
+      - BOT_POST_VOTES=${BOT_POST_VOTES:-false}
+      - BOT_POST_DONATIONS=${BOT_POST_DONATIONS:-false}
+      - BOT_POST_SURVEYS=${BOT_POST_SURVEYS:-false}
+      - BOT_CHECK_INTERVAL=${BOT_CHECK_INTERVAL:-60}
+      - APP_URL=${APP_URL:-}
+      - STATE_FILE=/data/bot-state.json
+      - AW_API_BASE=${AW_API_BASE:-https://www.abgeordnetenwatch.de/api/v2}
+      - DAWUM_URL=${DAWUM_NEWEST_URL:-https://api.dawum.de/newest_surveys.json}
+    depends_on:
+      - cache-service
+    restart: unless-stopped
+
+volumes:
+  cache_data:
+    driver: local

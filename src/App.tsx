@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './index.css';
-import type { Parliament, ParliamentPeriod, Poll, VoteResult } from './types/api';
+import type { Parliament, ParliamentPeriod, Poll, VoteResult, Fraction } from './types/api';
 import { api } from './api/client';
 import { Navbar } from './components/Navbar';
+import { formatPeriodYears } from './utils/periodLabel';
 import { LandingPage } from './views/LandingPage';
 import { ParliamentPage } from './views/ParliamentPage';
 import type { ParliamentTab } from './views/ParliamentPage';
@@ -29,6 +30,9 @@ const DUMMY_PERIOD: ParliamentPeriod = {
   type: 'legislature', parliament: { id: 0, label: '—' },
 };
 const DUMMY_PARLIAMENT: Parliament = { id: 0, label: '—', label_external_long: '—' };
+
+/** Tabs where the selected period actually affects displayed data */
+const PERIOD_RELEVANT_TABS: ParliamentTab[] = ['overview', 'votes', 'fractions', 'members'];
 
 export default function App() {
   const [parliaments, setParliaments] = useState<Parliament[]>([]);
@@ -57,6 +61,17 @@ export default function App() {
       .finally(() => setLoadingParliaments(false));
   }, []);
 
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    }
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, []);
+
   async function getOrLoadPeriods(parliamentId: number): Promise<ParliamentPeriod[]> {
     if (periodsCache[parliamentId]) return periodsCache[parliamentId];
     const data = await api.getParliamentPeriods(parliamentId);
@@ -72,74 +87,105 @@ export default function App() {
   }
 
   function handlePeriodChange(period: ParliamentPeriod) {
-    if (current.page === 'parliament') {
-      setStack((s) => [
-        ...s.slice(0, -1),
-        { ...current, period, tab: 'overview' },
-      ]);
-    }
+    // Update the period on every view in the stack that carries one.
+    // This preserves the current tab and page — no jumping to overview.
+    setStack((s) => s.map((view) => ('period' in view ? { ...view, period } : view)));
   }
 
   function handleTabChange(tab: ParliamentTab) {
-    if (current.page === 'parliament') {
-      setStack((s) => [
-        ...s.slice(0, -1),
-        { ...current, tab },
-      ]);
-    }
+    setStack((s) => {
+      const last = s[s.length - 1];
+      if (last.page === 'parliament') {
+        return [...s.slice(0, -1), { ...last, tab }];
+      }
+      // From a detail view: find the parliament view in the stack and pop to it with the new tab
+      const parlIdx = s.findIndex((v) => v.page === 'parliament');
+      if (parlIdx !== -1) {
+        const pv = s[parlIdx] as Extract<AppView, { page: 'parliament' }>;
+        const currentPeriod = ('period' in last) ? (last as { period: ParliamentPeriod }).period : pv.period;
+        return [...s.slice(0, parlIdx), { ...pv, tab, period: currentPeriod }];
+      }
+      return s;
+    });
   }
 
   function buildBreadcrumb() {
     if (current.page === 'home') return null;
 
-    const crumbs: { label: string; onClick?: () => void }[] = [];
+    type Crumb = { key: string; node: React.ReactNode };
+    const crumbs: Crumb[] = [];
 
     for (let i = 0; i < stack.length; i++) {
       const view = stack[i];
       const isLast = i === stack.length - 1;
-      const targetIdx = i;
-      const onClick = isLast ? undefined : () => setStack(stack.slice(0, targetIdx + 1));
+      const onClick = isLast ? undefined : () => setStack(stack.slice(0, i + 1));
+
+      const link = (label: string) => onClick
+        ? <button onClick={onClick} className="hover:text-slate-700 transition-colors">{label}</button>
+        : <span className="text-slate-700 font-medium">{label}</span>;
 
       if (view.page === 'home') {
-        crumbs.push({ label: 'Start', onClick });
+        crumbs.push({ key: `home-${i}`, node: link('Start') });
       } else if (view.page === 'parliament') {
-        if (crumbs.length === 0) crumbs.push({ label: view.parliament.label, onClick });
-        crumbs.push({ label: view.period.label, onClick });
+        if (crumbs.length === 0) crumbs.push({ key: `parl-${i}`, node: link(view.parliament.label) });
       } else if (view.page === 'vote') {
-        if (crumbs.length === 0) {
-          crumbs.push({ label: view.parliament.label });
-          crumbs.push({ label: view.period.label });
-        }
-        const title = view.poll.label.length > 40 ? view.poll.label.slice(0, 40) + '...' : view.poll.label;
-        crumbs.push({ label: title, onClick });
+        if (crumbs.length === 0) crumbs.push({ key: `parl-${i}`, node: <span className="text-slate-500">{view.parliament.label}</span> });
+        const title = view.poll.label.length > 45 ? view.poll.label.slice(0, 45) + '…' : view.poll.label;
+        crumbs.push({ key: `vote-${i}`, node: link(title) });
       } else if (view.page === 'fraction') {
-        if (crumbs.length === 0) {
-          crumbs.push({ label: view.parliament.label });
-          crumbs.push({ label: view.period.label });
-        }
-        crumbs.push({ label: view.fractionName, onClick });
+        if (crumbs.length === 0) crumbs.push({ key: `parl-${i}`, node: <span className="text-slate-500">{view.parliament.label}</span> });
+        crumbs.push({ key: `frac-${i}`, node: link(view.fractionName) });
       } else if (view.page === 'member') {
-        if (crumbs.length === 0) {
-          crumbs.push({ label: view.parliament.label });
-          crumbs.push({ label: view.period.label });
-        }
-        crumbs.push({ label: view.mandateName, onClick });
+        if (crumbs.length === 0) crumbs.push({ key: `parl-${i}`, node: <span className="text-slate-500">{view.parliament.label}</span> });
+        crumbs.push({ key: `mem-${i}`, node: link(view.mandateName) });
       }
     }
 
     return (
-      <nav className="flex items-center gap-1 text-xs text-slate-500 overflow-x-auto">
+      <nav className="flex items-center gap-1 text-xs text-slate-500">
         {crumbs.map((c, i) => (
-          <span key={i} className="flex items-center gap-1 flex-shrink-0">
+          <span key={c.key} className="flex items-center gap-1 flex-shrink-0">
             {i > 0 && <span className="text-slate-300">/</span>}
-            {c.onClick ? (
-              <button onClick={c.onClick} className="hover:text-slate-700 transition-colors">{c.label}</button>
-            ) : (
-              <span className="text-slate-700 font-medium">{c.label}</span>
-            )}
+            {c.node}
           </span>
         ))}
       </nav>
+    );
+  }
+
+  function buildPeriodSelector() {
+    // Period selector is only relevant for certain tabs/views
+    const isPeriodRelevant =
+      (current.page === 'parliament' && PERIOD_RELEVANT_TABS.includes(current.tab)) ||
+      current.page === 'vote' ||
+      current.page === 'fraction' ||
+      current.page === 'member';
+
+    if (!isPeriodRelevant) return null;
+    if (!('parliament' in current)) return null;
+
+    const parliamentId = (current as { parliament: Parliament }).parliament.id;
+    const availablePeriods = periodsCache[parliamentId] ?? [];
+    if (availablePeriods.length <= 1) return null;
+
+    const currentPeriod = (current as { period: ParliamentPeriod }).period;
+
+    return (
+      <div className="flex items-center gap-1">
+        {availablePeriods.map((p) => (
+          <button
+            key={p.id}
+            onClick={() => handlePeriodChange(p)}
+            className={`px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
+              p.id === currentPeriod.id
+                ? 'bg-blue-600 text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            {formatPeriodYears(p)}
+          </button>
+        ))}
+      </div>
     );
   }
 
@@ -215,8 +261,17 @@ export default function App() {
     }
 
     if (current.page === 'vote') {
+      const periods = periodsCache[current.parliament.id] ?? [];
       return (
-        <div className="flex-1 overflow-y-auto">
+        <ParliamentPage
+          parliament={current.parliament}
+          period={current.period}
+          periods={periods}
+          tab="votes"
+          onHome={goHome}
+          onPeriodChange={handlePeriodChange}
+          onTabChange={handleTabChange}
+        >
           <VoteDetailView
             poll={current.poll}
             onBack={goBack}
@@ -233,13 +288,22 @@ export default function App() {
               period: current.period,
             })}
           />
-        </div>
+        </ParliamentPage>
       );
     }
 
     if (current.page === 'fraction') {
+      const periods = periodsCache[current.parliament.id] ?? [];
       return (
-        <div className="flex-1 overflow-y-auto">
+        <ParliamentPage
+          parliament={current.parliament}
+          period={current.period}
+          periods={periods}
+          tab="fractions"
+          onHome={goHome}
+          onPeriodChange={handlePeriodChange}
+          onTabChange={handleTabChange}
+        >
           <FractionDetailView
             fractionId={current.fractionId}
             fractionName={current.fractionName}
@@ -259,13 +323,22 @@ export default function App() {
             contextVotes={current.contextVotes}
             contextPoll={current.contextPoll}
           />
-        </div>
+        </ParliamentPage>
       );
     }
 
     if (current.page === 'member') {
+      const periods = periodsCache[current.parliament.id] ?? [];
       return (
-        <div className="flex-1 overflow-y-auto">
+        <ParliamentPage
+          parliament={current.parliament}
+          period={current.period}
+          periods={periods}
+          tab="members"
+          onHome={goHome}
+          onPeriodChange={handlePeriodChange}
+          onTabChange={handleTabChange}
+        >
           <MemberDetailView
             mandateId={current.mandateId}
             mandateName={current.mandateName}
@@ -279,11 +352,30 @@ export default function App() {
               period: current.period,
             })}
           />
-        </div>
+        </ParliamentPage>
       );
     }
 
     return null;
+  }
+
+  async function handleSearchFraction(fraction: Fraction) {
+    const periodId = fraction.legislature?.id;
+    if (!periodId) return;
+
+    for (const parliament of parliaments) {
+      const periods = await getOrLoadPeriods(parliament.id);
+      const period = periods.find((entry) => entry.id === periodId);
+      if (!period) continue;
+      navigate({
+        page: 'fraction',
+        fractionId: fraction.id,
+        fractionName: fraction.label.replace(/\s*\([^)]+\)\s*$/, '').trim(),
+        parliament,
+        period,
+      });
+      return;
+    }
   }
 
   return (
@@ -292,6 +384,7 @@ export default function App() {
         onHome={goHome}
         onSearchOpen={() => setSearchOpen(true)}
         breadcrumb={buildBreadcrumb()}
+        periodSelector={buildPeriodSelector()}
       />
       {searchOpen && (
         <SearchOverlay
@@ -303,6 +396,7 @@ export default function App() {
           onSelectMandate={(mandateId, name) => {
             navigate({ page: 'member', mandateId, mandateName: name, fractionName: '', parliament: DUMMY_PARLIAMENT, period: DUMMY_PERIOD });
           }}
+          onSelectFraction={handleSearchFraction}
         />
       )}
       <div className="flex-1 flex flex-col">
@@ -311,4 +405,3 @@ export default function App() {
     </div>
   );
 }
-

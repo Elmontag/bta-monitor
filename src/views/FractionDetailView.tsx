@@ -1,8 +1,134 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft } from 'lucide-react';
-import type { Parliament, ParliamentPeriod, Poll, VoteResult, CandidacyMandate } from '../types/api';
+import { useState, useEffect, useMemo } from 'react';
+import { ChevronLeft, TrendingUp, Vote, Coins, BarChart3 } from 'lucide-react';
+import type { Parliament, ParliamentPeriod, Poll, VoteResult, CandidacyMandate, DawumData } from '../types/api';
 import { computeFractionStats, fractionColors, voteLabel, voteBadge } from '../utils/voteUtils';
 import { api, extractLabel } from '../api/client';
+import { getDawumFullData, AW_TO_DAWUM } from '../api/dawum';
+import { findPeriodElectionResultForParty } from '../data/elections';
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function fmt(n: number) {
+  return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+}
+
+/** Map a fraction name to donation JSON `party` field values */
+function fractionToPartyKeys(name: string): string[] {
+  const n = name.toLowerCase();
+  if (n.includes('cdu') && n.includes('csu')) return ['CDU', 'CSU'];
+  if (n.includes('cdu'))   return ['CDU'];
+  if (n.includes('csu'))   return ['CSU'];
+  if (n.includes('spd'))   return ['SPD'];
+  if (n.includes('fdp'))   return ['FDP'];
+  if (n.includes('grün') || n.includes('bündnis') || n.includes('b90')) return ['Grüne'];
+  if (n.includes('linke')) return ['Linke'];
+  if (n.includes('afd'))   return ['AfD'];
+  if (n.includes('bsw'))   return ['BSW'];
+  if (n.includes('ssw'))   return ['SSW'];
+  if (n.includes('freie wähler')) return ['Freie Wähler'];
+  return [];
+}
+
+/** Find the dawum party ID whose shortcut best matches a fraction name */
+function matchPartyId(
+  fractionName: string,
+  parties: Record<string, { Shortcut: string; Name: string }>,
+): string | null {
+  const n = fractionName.toLowerCase();
+  for (const [id, p] of Object.entries(parties)) {
+    if (p.Shortcut.toLowerCase() === n) return id;
+  }
+  for (const [id, p] of Object.entries(parties)) {
+    const sc = p.Shortcut.toLowerCase();
+    if (n.includes(sc) || sc.includes(n)) return id;
+  }
+  const aliases: Record<string, string[]> = {
+    grüne: ['grün', 'bündnis', 'b90'],
+    linke: ['die linke'],
+    'cdu/csu': ['cdu', 'csu'],
+    bsw: ['wagenknecht'],
+  };
+  for (const [id, p] of Object.entries(parties)) {
+    const sc = p.Shortcut.toLowerCase();
+    const alts = aliases[sc] ?? [];
+    if (alts.some(a => n.includes(a))) return id;
+  }
+  return null;
+}
+
+interface DawumStats {
+  currentForecast: number | null;
+  latestSurveyDate: string | null;
+  latestSurveyPeriod: { start: string; end: string } | null;
+  latestInstituteName: string | null;
+  lastElectionResult: number | null;
+  electionDate: string | null;
+  electionYear: number | null;
+}
+
+function computeDawumStats(
+  fractionName: string,
+  parliament: Parliament,
+  dawum: DawumData,
+  period?: ParliamentPeriod,
+): DawumStats {
+  const empty: DawumStats = {
+    currentForecast: null, latestSurveyDate: null, latestSurveyPeriod: null,
+    latestInstituteName: null, lastElectionResult: null, electionDate: null, electionYear: null,
+  };
+
+  // Election result comes from the curated elections table — dawum.de doesn't publish
+  // official results, so we can't derive it from survey data.
+  const electionMatch = findPeriodElectionResultForParty(
+    parliament.label,
+    period?.start_date_period,
+    fractionName,
+  );
+
+  const dawumParliamentId = AW_TO_DAWUM[parliament.label_external_long ?? '']
+    ?? AW_TO_DAWUM[parliament.label ?? ''];
+  if (!dawumParliamentId) {
+    if (!electionMatch) return empty;
+    return {
+      ...empty,
+      lastElectionResult: electionMatch.result,
+      electionDate: electionMatch.election.date,
+      electionYear: new Date(electionMatch.election.date).getFullYear(),
+    };
+  }
+  const partyId = matchPartyId(fractionName, dawum.parties);
+
+  // Constrain to the selected period's end date (if period has ended, only show data up to that date)
+  const today = new Date().toISOString().slice(0, 10);
+  const cutoffDate = period?.end_date_period && period.end_date_period < today
+    ? period.end_date_period
+    : today;
+
+  const latestForecast = partyId
+    ? dawum.surveys
+      .filter(s => s.parliament_id === dawumParliamentId && s.results[partyId] != null && s.date <= cutoffDate)
+      .sort((a, b) => b.date.localeCompare(a.date))[0]
+    : undefined;
+
+  return {
+    currentForecast: latestForecast && partyId ? latestForecast.results[partyId] ?? null : null,
+    latestSurveyDate: latestForecast?.survey_period?.end ?? latestForecast?.date ?? null,
+    latestSurveyPeriod: latestForecast?.survey_period ?? null,
+    latestInstituteName: latestForecast
+      ? (dawum.institutes[latestForecast.institute_id]?.Name ?? null)
+      : null,
+    lastElectionResult: electionMatch?.result ?? null,
+    electionDate: electionMatch?.election.date ?? null,
+    electionYear: electionMatch ? new Date(electionMatch.election.date).getFullYear() : null,
+  };
+}
+
+interface DonationStats {
+  currentYearTotal: number;
+  currentYearCount: number;
+  periodTotal: number;
+  periodCount: number;
+}
 
 interface FractionDetailViewProps {
   fractionId: number;
@@ -20,45 +146,95 @@ export function FractionDetailView({
   fractionId,
   fractionName,
   period,
+  parliament,
   onBack,
   onSelectMember,
   contextVotes,
   contextPoll,
 }: FractionDetailViewProps) {
   const colors = fractionColors(fractionName);
+  const isBundestag = parliament.id === 5;
+  const today = new Date().toISOString().slice(0, 10);
+  const isPastPeriod = !!period.end_date_period && period.end_date_period < today;
+  const todayYear = new Date().getFullYear();
+  // For donation KPI: use the period's last year if it has ended, otherwise current year
+  const activeYear = period.end_date_period && period.end_date_period < today
+    ? new Date(period.end_date_period).getFullYear()
+    : todayYear;
 
-  // Members loaded from API when no vote context
-  const [apiMembers, setApiMembers] = useState<CandidacyMandate[]>([]);
+  const [apiMembers,     setApiMembers]     = useState<CandidacyMandate[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
+  const [dawumStats,     setDawumStats]     = useState<DawumStats | null>(null);
+  const [donationStats,  setDonationStats]  = useState<DonationStats | null>(null);
 
+  // Load members when there is no vote context
   useEffect(() => {
     if (contextVotes && contextVotes.length > 0) return;
     setLoadingMembers(true);
     setApiMembers([]);
 
     const loadAll = async (): Promise<CandidacyMandate[]> => {
-      const acc: CandidacyMandate[] = [];
-      let start = 0;
-      let total = Infinity;
-      while (acc.length < total && start < 600) {
-        const { mandates, total: t } = await api.getMandatesForPeriod(period.id, start, start + 100);
-        total = t;
-        acc.push(...mandates);
-        start += 100;
-        if (mandates.length < 100) break;
-      }
-      return acc;
+      return api.getAllMandatesForPeriod(period.id);
     };
 
     loadAll()
       .then((all) => {
-        const members = all.filter((m) =>
+        // Dedup by politician.id before filtering by fraction
+        const seen = new Set<number>();
+        const unique = all.filter((m) => {
+          const pid = m.politician?.id ?? m.id;
+          if (seen.has(pid)) return false;
+          seen.add(pid);
+          return true;
+        });
+        const members = unique.filter((m) =>
           m.fraction_membership?.some((fm) => fm.fraction.id === fractionId)
         );
+        // Sort alphabetically
+        members.sort((a, b) => extractLabel(a.label).localeCompare(extractLabel(b.label), 'de'));
         setApiMembers(members);
       })
       .finally(() => setLoadingMembers(false));
   }, [period.id, fractionId, contextVotes]);
+
+  // Load dawum stats — filtered to the selected period
+  useEffect(() => {
+    getDawumFullData()
+      .then(data => setDawumStats(computeDawumStats(fractionName, parliament, data, period)))
+      .catch(() => {});
+  }, [fractionName, parliament, period.id]);
+
+  // Load donation stats (Bundestag only)
+  useEffect(() => {
+    if (!isBundestag) return;
+    const partyKeys = fractionToPartyKeys(fractionName);
+    if (partyKeys.length === 0) return;
+    const periodStartYear = period.start_date_period
+      ? new Date(period.start_date_period).getFullYear()
+      : activeYear;
+    const periodEndYear = period.end_date_period && period.end_date_period < today
+      ? new Date(period.end_date_period).getFullYear()
+      : todayYear;
+    const yearsToLoad: number[] = [];
+    for (let y = periodStartYear; y <= periodEndYear; y++) yearsToLoad.push(y);
+    Promise.all(
+      yearsToLoad.map(y =>
+        fetch(`${import.meta.env.BASE_URL}data/donations/${y}.json`).then(r => r.ok ? r.json() : null).catch(() => null)
+      )
+    ).then(results => {
+      let currentYearTotal = 0, currentYearCount = 0, periodTotal = 0, periodCount = 0;
+      for (const res of results) {
+        if (!res?.donations) continue;
+        for (const d of res.donations as { party: string; amount: number; year: number }[]) {
+          if (!partyKeys.includes(d.party)) continue;
+          periodTotal += d.amount;
+          periodCount++;
+          if (d.year === activeYear) { currentYearTotal += d.amount; currentYearCount++; }
+        }
+      }
+      setDonationStats({ currentYearTotal, currentYearCount, periodTotal, periodCount });
+    });
+  }, [isBundestag, fractionName, period, activeYear, todayYear, today]);
 
   // From vote context: per-member vote list for this fraction
   const fractionVotes = (contextVotes ?? []).filter((v) => v.fraction.id === fractionId);
@@ -70,6 +246,62 @@ export function FractionDetailView({
   // Members to display in table
   const membersFromVotes = fractionVotes.length > 0;
   const membersFromApi = !membersFromVotes && apiMembers.length > 0;
+
+  // Dynamic KPI cards
+  const kpis = useMemo(() => {
+    const cards: { label: string; value: string; sub?: string; icon: React.ReactNode }[] = [];
+    if (!isPastPeriod && dawumStats?.currentForecast != null) {
+      // Format the survey period: "DD. Mon YYYY – DD. Mon YYYY" or single date
+      let surveySub: string | undefined;
+      if (dawumStats.latestSurveyPeriod) {
+        const { start, end } = dawumStats.latestSurveyPeriod;
+        const fmtDate = (d: string) =>
+          new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
+        surveySub = start === end ? fmtDate(start) : `${fmtDate(start)} – ${fmtDate(end)}`;
+      } else if (dawumStats.latestSurveyDate) {
+        surveySub = new Date(dawumStats.latestSurveyDate).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+      if (dawumStats.latestInstituteName) {
+        surveySub = surveySub ? `${dawumStats.latestInstituteName} · ${surveySub}` : dawumStats.latestInstituteName;
+      }
+      cards.push({
+        label: 'Aktuelle Prognose',
+        value: `${dawumStats.currentForecast.toFixed(1)}\u202f%`,
+        sub: surveySub,
+        icon: <TrendingUp className="w-4 h-4 text-blue-500" />,
+      });
+    }
+    if (dawumStats?.lastElectionResult != null) {
+      const electionLabel = dawumStats.electionYear
+        ? `Wahlergebnis ${dawumStats.electionYear}`
+        : 'Letztes Wahlergebnis';
+      cards.push({
+        label: electionLabel,
+        value: `${dawumStats.lastElectionResult.toFixed(1)}\u202f%`,
+        sub: dawumStats.electionDate
+          ? new Date(dawumStats.electionDate).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
+          : undefined,
+        icon: <Vote className="w-4 h-4 text-slate-400" />,
+      });
+    }
+    if (donationStats && donationStats.currentYearTotal > 0) {
+      cards.push({
+        label: `Spenden ${activeYear}`,
+        value: fmt(donationStats.currentYearTotal),
+        sub: `${donationStats.currentYearCount} Spende(n)`,
+        icon: <Coins className="w-4 h-4 text-amber-500" />,
+      });
+    }
+    if (donationStats && donationStats.periodTotal > 0 && donationStats.periodTotal !== donationStats.currentYearTotal) {
+      cards.push({
+        label: 'Spenden Legislatur',
+        value: fmt(donationStats.periodTotal),
+        sub: `${donationStats.periodCount} Spende(n)`,
+        icon: <BarChart3 className="w-4 h-4 text-slate-400" />,
+      });
+    }
+    return cards;
+  }, [dawumStats, donationStats, activeYear, isPastPeriod]);
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
@@ -97,6 +329,19 @@ export function FractionDetailView({
           </p>
         )}
       </div>
+
+      {/* Dynamic KPI row (dawum + donations) */}
+      {kpis.length > 0 && (
+        <div className={`grid gap-3 mb-5 ${kpis.length <= 2 ? 'grid-cols-2' : kpis.length === 3 ? 'grid-cols-3' : 'grid-cols-2 sm:grid-cols-4'}`}>
+          {kpis.map(kpi => (
+            <div key={kpi.label} className="bg-white rounded-xl border border-slate-100 p-4">
+              <div className="flex items-center gap-1.5 mb-1.5">{kpi.icon}<span className="text-xs text-slate-500">{kpi.label}</span></div>
+              <div className="text-xl font-bold text-slate-800 leading-tight">{kpi.value}</div>
+              {kpi.sub && <div className="text-xs text-slate-400 mt-0.5">{kpi.sub}</div>}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Stats row — only when from a vote */}
       {stats && (
@@ -175,7 +420,9 @@ export function FractionDetailView({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {fractionVotes.map((v) => {
+                {[...fractionVotes]
+                  .sort((a, b) => extractLabel(a.mandate.label).localeCompare(extractLabel(b.mandate.label), 'de'))
+                  .map((v) => {
                   const name = extractLabel(v.mandate.label);
                   return (
                     <tr

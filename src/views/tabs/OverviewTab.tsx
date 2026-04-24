@@ -1,16 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Users, Vote, TrendingUp, Banknote, Landmark, ArrowRight, BarChart3 } from 'lucide-react';
 import { api, extractLabel } from '../../api/client';
-import type { Parliament, ParliamentPeriod, Fraction, CandidacyMandate } from '../../types/api';
-import { fractionColors } from '../../utils/voteUtils';
+import type { Parliament, ParliamentPeriod, Fraction, CandidacyMandate, GovernmentMember } from '../../types/api';
+import { fractionColors, fractionHex } from '../../utils/voteUtils';
 
-// Derive a solid bar/dot bg class from fractionColors border class
-function fractionSolidColor(colors: { border: string }): string {
-  return colors.border
-    .replace('border-', 'bg-')
-    .replace('-300', '-500')
-    .replace('-200', '-400');
-}
 
 interface OverviewTabProps {
   parliament: Parliament;
@@ -27,6 +20,7 @@ export function OverviewTab({ parliament, period, onTabChange }: OverviewTabProp
   const [fractions, setFractions] = useState<Fraction[]>([]);
   const [totalMembers, setTotalMembers] = useState<number | null>(null);
   const [fractionCounts, setFractionCounts] = useState<FractionCount[]>([]);
+  const [governmentMembers, setGovernmentMembers] = useState<GovernmentMember[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,19 +28,25 @@ export function OverviewTab({ parliament, period, onTabChange }: OverviewTabProp
     setFractions([]);
     setFractionCounts([]);
     setTotalMembers(null);
+    setGovernmentMembers([]);
 
     const loadData = async () => {
-      const [fractionsData, mandatesData] = await Promise.all([
+      const isCurrentPeriod = !period.end_date_period || period.end_date_period >= new Date().toISOString().slice(0, 10);
+      const [fractionsData, mandatesData, governmentData] = await Promise.all([
         api.getFractionsForPeriod(period.id).catch(() => [] as Fraction[]),
-        api.getMandatesForPeriod(period.id, 0, 500).catch(() => ({ mandates: [] as CandidacyMandate[], total: 0 })),
+        api.getAllMandatesForPeriod(period.id).catch(() => [] as CandidacyMandate[]),
+        isCurrentPeriod
+          ? api.getGovernmentMembersForPeriod(parliament, period).catch(() => [] as GovernmentMember[])
+          : Promise.resolve([] as GovernmentMember[]),
       ]);
 
       setFractions(fractionsData);
-      setTotalMembers(mandatesData.total);
+      setTotalMembers(mandatesData.length);
+      setGovernmentMembers(governmentData);
 
       // Count members per fraction from loaded mandates
       const countMap = new Map<number, number>();
-      for (const m of mandatesData.mandates) {
+      for (const m of mandatesData) {
         const fm = m.fraction_membership?.[0];
         if (fm) {
           countMap.set(fm.fraction.id, (countMap.get(fm.fraction.id) ?? 0) + 1);
@@ -63,7 +63,7 @@ export function OverviewTab({ parliament, period, onTabChange }: OverviewTabProp
     };
 
     loadData().finally(() => setLoading(false));
-  }, [period.id]);
+  }, [period.id, parliament.id, period.end_date_period]);
 
   const maxCount = Math.max(...fractionCounts.map((f) => f.count), 1);
   const isBundestag = parliament.id === 5;
@@ -117,21 +117,21 @@ export function OverviewTab({ parliament, period, onTabChange }: OverviewTabProp
             {fractionCounts.map(({ fraction, count }) => {
               const name = extractLabel(fraction.label);
               const colors = fractionColors(name);
+              const hex = fractionHex(name);
               const pct = Math.round((count / maxCount) * 100);
-              const solidColor = fractionSolidColor(colors);
               return (
                 <button
                   key={fraction.id}
                   onClick={() => onTabChange('fractions')}
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left"
                 >
-                  <div className={`w-3 h-3 rounded-full flex-shrink-0 ${solidColor}`} />
+                  <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: hex }} />
                   <span className={`text-sm font-medium w-36 flex-shrink-0 ${colors.text}`}>{name}</span>
                   <div className="flex-1 flex items-center gap-2">
                     <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${solidColor}`}
-                        style={{ width: `${pct}%` }}
+                        className="h-full rounded-full transition-all"
+                        style={{ width: `${pct}%`, backgroundColor: hex }}
                       />
                     </div>
                     <span className="text-xs text-slate-500 w-8 text-right">{count}</span>
@@ -156,6 +156,27 @@ export function OverviewTab({ parliament, period, onTabChange }: OverviewTabProp
           <p className="text-sm text-slate-400">Keine Daten verfügbar.</p>
         )}
       </section>
+
+      {governmentMembers.length > 0 && (
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Landmark className="w-4 h-4 text-slate-400" />
+            <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">Aktuelle Regierungsmitglieder</h2>
+            <span className="ml-auto text-xs text-slate-400">{governmentMembers.length} dynamisch erkannt</span>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 overflow-hidden">
+            {governmentMembers.map(({ politician, mandate, role }) => (
+              <div key={mandate?.id ?? politician.id} className="px-4 py-3">
+                <div className="text-sm font-medium text-slate-800">{extractLabel(politician.label)}</div>
+                <div className="text-xs text-slate-500 mt-0.5">{role}</div>
+                {mandate?.parliament_period?.label && (
+                  <div className="text-[11px] text-slate-400 mt-0.5">{extractLabel(mandate.parliament_period.label)}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Quick links */}
       <section>

@@ -1,4 +1,4 @@
-import { Landmark, Building2, Search } from 'lucide-react';
+import { Landmark, Building2 } from 'lucide-react';
 import type { Parliament } from '../types/api';
 
 interface LandingPageProps {
@@ -19,7 +19,7 @@ function isFederal(p: Parliament) {
   return p.id === BUNDESTAG_ID || isEU(p);
 }
 
-export function LandingPage({ parliaments, onSelect, onSearchOpen, loading }: LandingPageProps) {
+export function LandingPage({ parliaments, onSelect, loading }: LandingPageProps) {
   const federal = parliaments
     .filter(isFederal)
     .sort((a) => (a.id === BUNDESTAG_ID ? -1 : 1));
@@ -30,20 +30,18 @@ export function LandingPage({ parliaments, onSelect, onSearchOpen, loading }: La
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
       {/* Hero */}
-      <div className="text-center mb-10">
+      <div className="text-center mb-12">
         <div className="flex items-center justify-center gap-3 mb-4">
           <Landmark className="w-10 h-10 text-blue-600" />
           <h1 className="text-4xl font-bold text-slate-900">Parlamentskompass</h1>
         </div>
-        <p className="text-lg text-slate-500 mb-8">Analyse parlamentarischer Arbeit in Deutschland und der EU</p>
-
-        <button
-          onClick={onSearchOpen}
-          className="flex items-center gap-3 mx-auto w-full max-w-lg px-5 py-3 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow text-slate-400 text-sm"
-        >
-          <Search className="w-4 h-4 flex-shrink-0" />
-          <span>Abstimmungen, Abgeordnete, Fraktionen suchen...</span>
-        </button>
+        <p className="text-lg text-slate-500">
+          Analyse parlamentarischer Arbeit in Deutschland und der EU
+        </p>
+        <p className="text-sm text-slate-400 mt-2">
+          Parlament auswählen oder Suche verwenden&nbsp;
+          <kbd className="inline text-xs bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-mono">⌘K</kbd>
+        </p>
       </div>
 
       {loading ? (

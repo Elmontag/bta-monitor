@@ -48,24 +48,32 @@ export function computeFractionStats(results: VoteResult[]): FractionStats[] {
     .sort((a, b) => b.total - a.total);
 }
 
-const FRACTION_COLOR_MAP: Array<{ keys: string[]; colors: { bg: string; text: string; border: string } }> = [
-  { keys: ['SPD'],           colors: { bg: 'bg-red-50',     text: 'text-red-700',    border: 'border-red-300' } },
-  { keys: ['CDU', 'CSU'],    colors: { bg: 'bg-stone-50',   text: 'text-stone-700',  border: 'border-stone-300' } },
-  { keys: ['GRÜNEN', 'Grüne', 'BÜNDNIS'], colors: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-300' } },
-  { keys: ['FDP'],           colors: { bg: 'bg-yellow-50',  text: 'text-yellow-700', border: 'border-yellow-300' } },
-  { keys: ['AfD'],           colors: { bg: 'bg-sky-50',     text: 'text-sky-700',    border: 'border-sky-300' } },
-  { keys: ['Linke'],         colors: { bg: 'bg-pink-50',    text: 'text-pink-700',   border: 'border-pink-300' } },
-  { keys: ['BSW'],           colors: { bg: 'bg-purple-50',  text: 'text-purple-700', border: 'border-purple-300' } },
-  { keys: ['SSW'],           colors: { bg: 'bg-indigo-50',  text: 'text-indigo-700', border: 'border-indigo-300' } },
+const FRACTION_COLOR_MAP: Array<{ keys: string[]; colors: { bg: string; text: string; border: string }; hex: string }> = [
+  { keys: ['SPD'],           colors: { bg: 'bg-red-50',     text: 'text-red-700',    border: 'border-red-300' },    hex: '#ef4444' },
+  { keys: ['CDU', 'CSU'],    colors: { bg: 'bg-stone-50',   text: 'text-stone-700',  border: 'border-stone-300' },  hex: '#78716c' },
+  { keys: ['GRÜNEN', 'Grüne', 'BÜNDNIS'], colors: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-300' }, hex: '#22c55e' },
+  { keys: ['FDP'],           colors: { bg: 'bg-yellow-50',  text: 'text-yellow-700', border: 'border-yellow-300' }, hex: '#eab308' },
+  { keys: ['AfD'],           colors: { bg: 'bg-sky-50',     text: 'text-sky-700',    border: 'border-sky-300' },    hex: '#0ea5e9' },
+  { keys: ['Linke'],         colors: { bg: 'bg-pink-50',    text: 'text-pink-700',   border: 'border-pink-300' },   hex: '#ec4899' },
+  { keys: ['BSW'],           colors: { bg: 'bg-purple-50',  text: 'text-purple-700', border: 'border-purple-300' }, hex: '#a855f7' },
+  { keys: ['SSW'],           colors: { bg: 'bg-indigo-50',  text: 'text-indigo-700', border: 'border-indigo-300' }, hex: '#6366f1' },
 ];
 
 const DEFAULT_COLORS = { bg: 'bg-slate-50', text: 'text-slate-600', border: 'border-slate-200' };
+const DEFAULT_HEX = '#94a3b8';
 
 export function fractionColors(name: string): { bg: string; text: string; border: string } {
   for (const { keys, colors } of FRACTION_COLOR_MAP) {
     if (keys.some((k) => name.includes(k))) return colors;
   }
   return DEFAULT_COLORS;
+}
+
+export function fractionHex(name: string): string {
+  for (const { keys, hex } of FRACTION_COLOR_MAP) {
+    if (keys.some((k) => name.includes(k))) return hex;
+  }
+  return DEFAULT_HEX;
 }
 
 export function voteLabel(choice: VoteChoice): string {

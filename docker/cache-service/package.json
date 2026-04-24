@@ -1,0 +1,14 @@
+{
+  "name": "bta-cache-service",
+  "version": "1.0.0",
+  "description": "Periodic cache synchronisation for bta-monitor — writes /data/cache/*.json",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "cheerio": "^1.1.2"
+  }
+}
