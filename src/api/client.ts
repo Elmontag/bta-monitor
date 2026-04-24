@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { Parliament, ParliamentPeriod, Poll, VoteResult, APIResponse, APISingleResponse, CandidacyMandate, MandateVote, Fraction, Sidejob, Politician, GovernmentMember } from '../types/api';
+import type { ElectionResult } from '../data/elections';
 
 const API_BASE = 'https://www.abgeordnetenwatch.de/api/v2';
 const MEM_TTL = 5 * 60 * 1000; // 5 min — persistent cache handles freshness
@@ -66,33 +67,23 @@ async function get<T>(path: string, params?: Record<string, unknown>): Promise<T
 }
 
 /**
- * Named cache fetch: tries mem → persistent → live API → stale fallback.
- * Use this for all high-level API methods so they benefit from the cache service.
+ * Named cache fetch: tries mem → persistent cache → live API.
+ * Persistent cache always takes precedence over a live call, so the app
+ * keeps working with stale-but-present data when the API is unreachable.
  */
 async function cachedFetch<T>(persistKey: string, live: () => Promise<T>): Promise<T> {
-  // 1. In-memory
   const memHit = fromMem<T>(persistKey);
   if (memHit) return memHit;
 
-  // 2. Persistent cache
   const persisted = await fromPersistent<T>(persistKey);
   if (persisted !== null) {
     toMem(persistKey, persisted);
     return persisted;
   }
 
-  // 3. Live API (with stale fallback on failure)
-  let stale: T | null = null;
-  try {
-    // Try persistent cache again without TTL check for stale fallback candidate
-    stale = persisted; // already null here, but kept for clarity
-    const data = await live();
-    toMem(persistKey, data);
-    return data;
-  } catch (err) {
-    if (stale !== null) return stale;
-    throw err;
-  }
+  const data = await live();
+  toMem(persistKey, data);
+  return data;
 }
 
 function sliceRange<T>(items: T[], rangeStart: number, rangeEnd: number) {
@@ -343,6 +334,12 @@ export const api = {
     // Without the cache-service-sourced snapshot we cannot safely surface cabinet
     // data (no browser-accessible live source), so return an empty list.
     return [];
+  },
+
+  /** Load Bundeswahlleiterin election results from the cache-service snapshot. */
+  async getElectionResults(): Promise<ElectionResult[]> {
+    const persisted = await fromPersistent<ElectionResult[]>('election-results');
+    return persisted ?? [];
   },
 };
 

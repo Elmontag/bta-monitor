@@ -1,9 +1,8 @@
 /**
- * Curated historical election results.
- *
- * dawum.de only contains forecasts — no official election results — so we keep a small
- * curated table here. Each entry is keyed by the AW parliament label plus the election
- * year and contains a shortcut → vote-share (Zweitstimmen) map in percent.
+ * Curated historical election results (static fallback).
+ * The cache-service writes live Bundeswahlleiterin data to
+ * /data/cache/election-results.json — the frontend merges that at startup
+ * via setLiveElections() so live data takes precedence over these constants.
  *
  * Sources:
  *   - Bundestag: Bundeswahlleiterin (https://www.bundeswahlleiterin.de/bundestagswahlen/)
@@ -98,6 +97,27 @@ const ELECTIONS: ElectionResult[] = [
   },
 ];
 
+/** Live election results fetched from the Bundeswahlleiterin cache. */
+let liveElections: ElectionResult[] = [];
+
+/**
+ * Called at app startup to inject freshly-fetched election results.
+ * Live data takes precedence over the hardcoded ELECTIONS table for
+ * matching entries (same parliamentLabel + date).
+ */
+export function setLiveElections(data: ElectionResult[]): void {
+  liveElections = Array.isArray(data) ? data : [];
+}
+
+/** Merged list: live data first, then static fallback (deduplicated by parliamentLabel+date). */
+function allElections(): ElectionResult[] {
+  const seen = new Set(liveElections.map((e) => `${e.parliamentLabel}|${e.date}`));
+  return [
+    ...liveElections,
+    ...ELECTIONS.filter((e) => !seen.has(`${e.parliamentLabel}|${e.date}`)),
+  ];
+}
+
 /**
  * Look up the election result that started the given legislative period.
  * Matches the election whose date is within 180 days before the period start
@@ -107,7 +127,7 @@ export function findPeriodElection(
   parliamentLabel: string,
   periodStart?: string | null,
 ): ElectionResult | null {
-  const candidates = ELECTIONS.filter((e) => e.parliamentLabel === parliamentLabel);
+  const candidates = allElections().filter((e) => e.parliamentLabel === parliamentLabel);
   if (candidates.length === 0) return null;
   if (!periodStart) {
     // Most recent election for this parliament

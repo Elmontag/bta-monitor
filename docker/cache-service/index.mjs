@@ -203,7 +203,117 @@ async function scrapeDonationPage(pageYear) {
   return out;
 }
 
-async function syncParliaments() {
+// ── Party name → shortcut mapping (Bundeswahlleiterin CSV → app convention) ──
+const BWL_PARTY_MAP = {
+  'Sozialdemokratische Partei Deutschlands': 'SPD',
+  'Christlich Demokratische Union Deutschlands': 'CDU',
+  'Christlich-Soziale Union in Bayern e.V.': 'CSU',
+  'BÜNDNIS 90/DIE GRÜNEN': 'Grüne',
+  'Freie Demokratische Partei': 'FDP',
+  'Alternative für Deutschland': 'AfD',
+  'Die Linke': 'Linke',
+  'Bündnis Sahra Wagenknecht - Vernunft und Gerechtigkeit': 'BSW',
+  'Südschleswigscher Wählerverband': 'SSW',
+  'Volt Deutschland': 'Volt',
+  'FREIE WÄHLER': 'Freie Wähler',
+};
+
+// Known Bundestagswahl open-data CSV URLs
+const BWL_ELECTIONS = [
+  {
+    year: 2025,
+    date: '2025-02-23',
+    csvUrl: 'https://www.bundeswahlleiterin.de/bundestagswahlen/2025/ergebnisse/opendata/btw25/csv/kerg.csv',
+  },
+];
+
+async function parseBwlKerg(csvText, electionDate) {
+  const lines = csvText.split('\n').map((l) => l.trimEnd().split(';'));
+
+  // Lines 0-4: metadata, line 5: party-name header, 6: Erst/Zweit, 7: Endg/Vor, 8+: data
+  const headerLine = lines[5];
+  if (!headerLine) return null;
+
+  const NON_PARTY = new Set(['Wahlberechtigte', 'Wählende', 'Ungültige Stimmen', 'Gültige Stimmen', 'Übrige', '']);
+
+  let gueltigeZweitCol = -1;
+  const partyColumns = []; // { name, col }
+
+  for (let i = 4; i < headerLine.length; i += 4) {
+    const cell = headerLine[i]?.trim() ?? '';
+    if (!cell) continue;
+    if (cell === 'Gültige Stimmen') {
+      gueltigeZweitCol = i + 2; // Zweitstimmen Endgültig
+    } else if (!NON_PARTY.has(cell)) {
+      partyColumns.push({ name: cell, col: i + 2 }); // Zweitstimmen Endgültig
+    }
+  }
+
+  if (gueltigeZweitCol < 0) return null;
+
+  // Find national row (Nr=99 or Gebiet contains "Bundesgebiet")
+  const natRow = lines.find(
+    (l) => l[0]?.trim() === '99' || (l[1]?.trim() ?? '').includes('Bundesgebiet'),
+  );
+  if (!natRow) return null;
+
+  const gueltigeZweit = parseInt(natRow[gueltigeZweitCol] ?? '0', 10);
+  if (!gueltigeZweit) return null;
+
+  const results = {};
+  let cduVotes = 0;
+  let csuVotes = 0;
+
+  for (const { name, col } of partyColumns) {
+    const votes = parseInt(natRow[col] ?? '0', 10);
+    if (!votes) continue;
+    const shortcut = BWL_PARTY_MAP[name];
+    if (!shortcut) continue;
+    if (shortcut === 'CDU') cduVotes = votes;
+    else if (shortcut === 'CSU') csuVotes = votes;
+    else results[shortcut] = Math.round((votes / gueltigeZweit) * 1000) / 10;
+  }
+
+  // CDU/CSU always combined
+  if (cduVotes + csuVotes > 0) {
+    results['CDU/CSU'] = Math.round(((cduVotes + csuVotes) / gueltigeZweit) * 1000) / 10;
+  }
+
+  return {
+    parliamentLabel: 'Bundestag',
+    date: electionDate,
+    source: 'Bundeswahlleiterin',
+    sourceUrl: `https://www.bundeswahlleiterin.de/bundestagswahlen/${electionDate.slice(0, 4)}/ergebnisse/bund-99.html`,
+    results,
+  };
+}
+
+async function syncBundeswahlleiterinResults() {
+  const electionResults = [];
+
+  for (const election of BWL_ELECTIONS) {
+    try {
+      const res = await axios.get(election.csvUrl, {
+        responseType: 'text',
+        timeout: 30_000,
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+      });
+      const parsed = await parseBwlKerg(res.data, election.date);
+      if (parsed) {
+        electionResults.push(parsed);
+        console.log(`[cache] election results parsed: BTW ${election.year} (${Object.keys(parsed.results).length} parties)`);
+      }
+    } catch (err) {
+      console.warn(`[cache] BTW ${election.year} election results unavailable:`, err.message);
+    }
+  }
+
+  if (electionResults.length > 0) {
+    await writeCache('election-results', electionResults);
+  }
+}
+
+
   const res = await get('/parliaments');
   await writeCache('parliaments', res.data);
   return res.data;
@@ -376,6 +486,7 @@ async function sync() {
 
     await syncDawum();
     await syncDonations();
+    await syncBundeswahlleiterinResults();
   } catch (error) {
     console.error('[cache] sync error:', error.message);
   }

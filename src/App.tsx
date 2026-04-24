@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './index.css';
 import type { Parliament, ParliamentPeriod, Poll, VoteResult, Fraction } from './types/api';
 import { api } from './api/client';
+import { setLiveElections } from './data/elections';
 import { Navbar } from './components/Navbar';
 import { formatPeriodYears } from './utils/periodLabel';
 import { LandingPage } from './views/LandingPage';
@@ -59,6 +60,8 @@ export default function App() {
     api.getParliaments()
       .then(setParliaments)
       .finally(() => setLoadingParliaments(false));
+    // Load live election results from Bundeswahlleiterin cache
+    api.getElectionResults().then(setLiveElections).catch(() => {/* use static fallback */});
   }, []);
 
   useEffect(() => {
