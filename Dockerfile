@@ -8,7 +8,7 @@ RUN npm ci
 COPY . .
 
 # Vite env vars are baked in at build time — pass via --build-arg in docker compose
-ARG VITE_PRIVACY_MODE=false
+ARG VITE_PRIVACY_MODE=true
 ARG VITE_KOFI_URL=
 ENV VITE_PRIVACY_MODE=$VITE_PRIVACY_MODE
 ENV VITE_KOFI_URL=$VITE_KOFI_URL

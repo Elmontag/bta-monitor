@@ -7,9 +7,9 @@ services:
       context: .
       dockerfile: Dockerfile
       # VITE_ vars are baked in at build time — set in .env or pass via CLI:
-      #   VITE_PRIVACY_MODE=true docker compose build
+      #   VITE_PRIVACY_MODE=false docker compose build
       args:
-        VITE_PRIVACY_MODE: ${VITE_PRIVACY_MODE:-false}
+        VITE_PRIVACY_MODE: ${VITE_PRIVACY_MODE:-true}
         VITE_KOFI_URL: ${VITE_KOFI_URL:-https://ko-fi.com/elmontag}
     ports:
       - "${FRONTEND_PORT:-8080}:80"

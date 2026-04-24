@@ -5,6 +5,7 @@ import { computeFractionStats, fractionColors, voteLabel, voteBadge } from '../u
 import { api, extractLabel } from '../api/client';
 import { getDawumFullData, AW_TO_DAWUM } from '../api/dawum';
 import { findPeriodElectionResultForParty } from '../data/elections';
+import { config } from '../config';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -204,19 +205,25 @@ export function FractionDetailView({
       .catch(() => {});
   }, [fractionName, parliament, period.id]);
 
-  // Load donation stats (Bundestag only)
+  // Load donation stats (Bundestag only, privacy mode off)
   useEffect(() => {
-    if (!isBundestag) return;
+    if (!isBundestag || config.privacyMode) return;
     const partyKeys = fractionToPartyKeys(fractionName);
     if (partyKeys.length === 0) return;
-    const periodStartYear = period.start_date_period
-      ? new Date(period.start_date_period).getFullYear()
-      : activeYear;
-    const periodEndYear = period.end_date_period && period.end_date_period < today
-      ? new Date(period.end_date_period).getFullYear()
-      : todayYear;
+
+    // Exact period boundaries (not just year boundaries)
+    const periodStart = period.start_date_period ?? '';
+    const periodEnd = period.end_date_period && period.end_date_period < today
+      ? period.end_date_period
+      : today;
+    const activeYearStart = `${activeYear}-01-01`;
+
+    // Load all year files that overlap with the period
+    const periodStartYear = periodStart ? new Date(periodStart).getFullYear() : activeYear;
+    const periodEndYear = new Date(periodEnd).getFullYear();
     const yearsToLoad: number[] = [];
     for (let y = periodStartYear; y <= periodEndYear; y++) yearsToLoad.push(y);
+
     Promise.all(
       yearsToLoad.map(y =>
         fetch(`${import.meta.env.BASE_URL}data/donations/${y}.json`).then(r => r.ok ? r.json() : null).catch(() => null)
@@ -225,16 +232,18 @@ export function FractionDetailView({
       let currentYearTotal = 0, currentYearCount = 0, periodTotal = 0, periodCount = 0;
       for (const res of results) {
         if (!res?.donations) continue;
-        for (const d of res.donations as { party: string; amount: number; year: number }[]) {
+        for (const d of res.donations as { party: string; amount: number; date: string }[]) {
           if (!partyKeys.includes(d.party)) continue;
+          // Filter by exact period dates
+          if (d.date < periodStart || d.date > periodEnd) continue;
           periodTotal += d.amount;
           periodCount++;
-          if (d.year === activeYear) { currentYearTotal += d.amount; currentYearCount++; }
+          if (d.date >= activeYearStart) { currentYearTotal += d.amount; currentYearCount++; }
         }
       }
       setDonationStats({ currentYearTotal, currentYearCount, periodTotal, periodCount });
     });
-  }, [isBundestag, fractionName, period, activeYear, todayYear, today]);
+  }, [isBundestag, fractionName, period, activeYear, today]);
 
   // From vote context: per-member vote list for this fraction
   const fractionVotes = (contextVotes ?? []).filter((v) => v.fraction.id === fractionId);

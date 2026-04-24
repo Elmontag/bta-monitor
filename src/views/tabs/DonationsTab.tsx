@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ExternalLink, Calendar, TrendingUp, Coins, BarChart3, Hash } from 'lucide-react';
+import { ExternalLink, Calendar, TrendingUp, Coins, BarChart3, Hash, Lock } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import type { Donation } from '../../data/donations';
 import { fractionColors } from '../../utils/voteUtils';
@@ -28,11 +28,34 @@ function partyHex(party: string) { return PARTY_HEX[party] ?? '#94a3b8'; }
 function fmt(n: number) {
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
 }
-function donorLabel(d: Donation) {
-  return config.privacyMode && d.category === 'Privatperson' ? 'Privatperson (anonym)' : d.donor;
-}
 
 export function DonationsTab({ onSelectFraction: _onSelectFraction }: DonationsTabProps) {
+  // Privacy mode: show no donor data at all
+  if (config.privacyMode) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-16 flex flex-col items-center justify-center text-center gap-4">
+        <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+          <Lock className="w-6 h-6 text-slate-400" />
+        </div>
+        <div>
+          <p className="font-semibold text-slate-700">Datenschutzmodus aktiv</p>
+          <p className="text-sm text-slate-400 mt-1 max-w-sm">
+            Spenderdaten werden aus Datenschutzgründen nicht geladen.
+            Zum Aktivieren <code className="text-xs bg-slate-100 px-1 rounded">VITE_PRIVACY_MODE=false</code> setzen.
+          </p>
+        </div>
+        <a
+          href="https://www.bundestag.de/parlament/praesidium/parteienfinanzierung/fundstellen50000"
+          target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 mt-2"
+        >
+          <ExternalLink className="w-3 h-3" />
+          Quellseite Bundestag
+        </a>
+      </div>
+    );
+  }
+
   const [manifest, setManifest] = useState<DonationsManifest | null>(null);
   const [loadedData, setLoadedData] = useState<Record<number, Donation[]>>({});
   const [loadingYears, setLoadingYears] = useState<Set<number>>(new Set());
@@ -299,9 +322,7 @@ export function DonationsTab({ onSelectFraction: _onSelectFraction }: DonationsT
                       </span>
                     </td>
                     <td className="px-4 py-2.5 text-slate-700 max-w-xs">
-                      <span className={d.category === 'Privatperson' && config.privacyMode ? 'italic text-slate-400' : ''}>
-                        {donorLabel(d)}
-                      </span>
+                      {d.donor}
                     </td>
                     <td className="px-4 py-2.5 text-right font-semibold text-slate-800 whitespace-nowrap">
                       {fmt(d.amount)}
