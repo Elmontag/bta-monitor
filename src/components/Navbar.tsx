@@ -25,13 +25,13 @@ export function Navbar({ onHome, onSearchOpen, breadcrumb, periodSelector, onNav
             <>
               <button
                 onClick={() => onNavigateLegal('impressum')}
-                className="hidden sm:block px-2 py-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                className="px-2 py-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
               >
                 Impressum
               </button>
               <button
                 onClick={() => onNavigateLegal('datenschutz')}
-                className="hidden sm:block px-2 py-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                className="px-2 py-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
               >
                 Datenschutz
               </button>
