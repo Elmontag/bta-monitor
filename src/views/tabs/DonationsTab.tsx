@@ -1,9 +1,18 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ExternalLink, Calendar, TrendingUp, Coins, BarChart3, Hash, Lock } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import type { Donation } from '../../data/donations';
 import { fractionColors } from '../../utils/voteUtils';
 import { config } from '../../config';
+
+interface Donation {
+  id: string;
+  date: string;
+  year: number;
+  party: string;
+  donor: string;
+  amount: number;
+  category: 'Unternehmen' | 'Privatperson' | 'Verband' | 'Stiftung';
+}
 
 interface DonationsManifest {
   years: number[];
@@ -75,19 +84,8 @@ export function DonationsTab({ onSelectFraction: _onSelectFraction }: DonationsT
         toLoad.forEach(loadYear);
       })
       .catch(() => {
-        // Fallback: use static TS data if JSON not available
-        import('../../data/donations').then(({ DONATIONS, DONATIONS_LAST_UPDATED }) => {
-          const byYear: Record<number, Donation[]> = {};
-          for (const d of DONATIONS) {
-            (byYear[d.year] ??= []).push(d);
-          }
-          setLoadedData(byYear);
-          setManifest({
-            years: Object.keys(byYear).map(Number).sort((a, b) => b - a),
-            lastUpdated: DONATIONS_LAST_UPDATED,
-            totalCount: DONATIONS.length,
-          });
-        });
+        // No fallback — donation JSON files are not bundled with the app.
+        // Run generate_donations_ts.py or start Docker to populate public/data/donations/.
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

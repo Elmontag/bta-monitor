@@ -1,12 +1,14 @@
 """
-Generate per-year donation JSON files + donations.ts from scraped Bundestag data.
-Uses donation date (Eingang der Spende) for year attribution.
+Generate per-year donation JSON files from scraped Bundestag data.
 
 Run: python generate_donations_ts.py
 Output:
   public/data/donations/YYYY.json  (one per year)
   public/data/donations/manifest.json
-  src/data/donations.ts            (TS fallback for static build)
+
+NOTE: Output files contain donor names and are gitignored.
+      Do NOT commit them. They are served at runtime by the cache-service (Docker)
+      or populated locally for development only.
 """
 import requests, json, re, os
 from bs4 import BeautifulSoup
@@ -256,39 +258,5 @@ manifest_path = os.path.join(json_dir, 'manifest.json')
 with open(manifest_path, 'w', encoding='utf-8') as f:
     json.dump(manifest, f, ensure_ascii=False, indent=2)
 print(f"Written {manifest_path}  (years: {manifest['years']})")
-
-# ── Write TypeScript fallback (src/data/donations.ts) ───────────────────────
-ts_lines = [
-    "export interface Donation {",
-    "  id: string;",
-    "  date: string;",
-    "  year: number;",
-    "  party: string;",
-    "  donor: string;",
-    "  amount: number;",
-    "  category: 'Unternehmen' | 'Privatperson' | 'Verband' | 'Stiftung';",
-    "}",
-    "",
-    f"export const DONATIONS_LAST_UPDATED = '{today}';",
-    "",
-    "// Quelle: Bundestag.de – Großspenden §25 Abs. 3 PartG",
-    "// Jahresattribution nach Eingangsdatum der Spende (nicht Meldedatum)",
-    "export const DONATIONS: Donation[] = [",
-]
-
-for yr in sorted(grouped.keys(), reverse=True):
-    ts_lines.append(f"  // ── {yr} {'─' * 60}")
-    for d in grouped[yr]:
-        donor_esc = d['donor'].replace("'", "\\'").replace('"', '\\"')
-        ts_lines.append(
-            f"  {{ id: '{d['id']}', date: '{d['date']}', year: {yr}, "
-            f"party: '{d['party']}', donor: '{donor_esc}', "
-            f"amount: {d['amount']}, category: '{d['category']}' }},"
-        )
-
-ts_lines.append("];")
-
-ts_path = os.path.join(os.path.dirname(__file__), 'src', 'data', 'donations.ts')
-with open(ts_path, 'w', encoding='utf-8') as f:
-    f.write("\n".join(ts_lines))
-print(f"\nWritten {ts_path}  (total {len(all_raw)} entries)")
+print(f"\nTotal (no dedup): {len(all_raw)} entries across all years")
+print("NOTE: These files are gitignored. Do not commit them.")
