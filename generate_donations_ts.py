@@ -179,7 +179,7 @@ def scrape_page(year):
         out.append({
             'page_year': year,
             'date': date,
-            'year': yr if yr > 0 else year,
+            'year': year,  # group by page/announcement year (matches Bundestag page org)
             'party': party,
             'amount': amount,
             'donor': clean_donor(donor_raw),

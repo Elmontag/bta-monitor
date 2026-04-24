@@ -192,7 +192,7 @@ async function scrapeDonationPage(pageYear) {
     out.push({
       page_year: pageYear,
       date,
-      year: year > 0 ? year : pageYear,
+      year: pageYear, // group by page/announcement year (matches Bundestag page organization)
       party: normalizeParty(texts[0]),
       amount: parseAmount(texts[1]),
       donor: cleanDonor(donorRaw),
