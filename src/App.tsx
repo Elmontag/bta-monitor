@@ -18,9 +18,11 @@ import { VoteDetailView } from './views/VoteDetailView';
 import { FractionDetailView } from './views/FractionDetailView';
 import { MemberDetailView } from './views/MemberDetailView';
 import { SearchOverlay } from './components/SearchOverlay';
+import { LegalPage } from './views/LegalPage';
 
 type AppView =
   | { page: 'home' }
+  | { page: 'legal'; view: 'impressum' | 'datenschutz' }
   | { page: 'parliament'; parliament: Parliament; period: ParliamentPeriod; tab: ParliamentTab }
   | { page: 'vote'; poll: Poll; parliament: Parliament; period: ParliamentPeriod; voteResults?: VoteResult[] }
   | { page: 'fraction'; fractionId: number; fractionName: string; parliament: Parliament; period: ParliamentPeriod; contextVotes?: VoteResult[]; contextPoll?: Poll }
@@ -200,8 +202,13 @@ export default function App() {
           onSelect={handleSelectParliament}
           onSearchOpen={() => setSearchOpen(true)}
           loading={loadingParliaments}
+          onNavigateLegal={(view) => navigate({ page: 'legal', view })}
         />
       );
+    }
+
+    if (current.page === 'legal') {
+      return <LegalPage view={current.view} onBack={goBack} />;
     }
 
     if (current.page === 'parliament') {
@@ -388,6 +395,7 @@ export default function App() {
         onSearchOpen={() => setSearchOpen(true)}
         breadcrumb={buildBreadcrumb()}
         periodSelector={buildPeriodSelector()}
+        onNavigateLegal={(view) => navigate({ page: 'legal', view })}
       />
       {searchOpen && (
         <SearchOverlay

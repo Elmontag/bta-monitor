@@ -5,9 +5,10 @@ interface NavbarProps {
   onSearchOpen: () => void;
   breadcrumb?: React.ReactNode;
   periodSelector?: React.ReactNode;
+  onNavigateLegal?: (view: 'impressum' | 'datenschutz') => void;
 }
 
-export function Navbar({ onHome, onSearchOpen, breadcrumb, periodSelector }: NavbarProps) {
+export function Navbar({ onHome, onSearchOpen, breadcrumb, periodSelector, onNavigateLegal }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
       <div className="h-14 flex items-center justify-between px-4">
@@ -20,6 +21,22 @@ export function Navbar({ onHome, onSearchOpen, breadcrumb, periodSelector }: Nav
         </button>
 
         <div className="flex items-center gap-1">
+          {onNavigateLegal && (
+            <>
+              <button
+                onClick={() => onNavigateLegal('impressum')}
+                className="hidden sm:block px-2 py-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                Impressum
+              </button>
+              <button
+                onClick={() => onNavigateLegal('datenschutz')}
+                className="hidden sm:block px-2 py-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                Datenschutz
+              </button>
+            </>
+          )}
           <button
             onClick={onSearchOpen}
             className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"

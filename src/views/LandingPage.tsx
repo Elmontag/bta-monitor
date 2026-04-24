@@ -6,6 +6,7 @@ interface LandingPageProps {
   onSelect: (p: Parliament) => void;
   onSearchOpen: () => void;
   loading: boolean;
+  onNavigateLegal: (view: 'impressum' | 'datenschutz') => void;
 }
 
 const BUNDESTAG_ID = 5;
@@ -19,7 +20,7 @@ function isFederal(p: Parliament) {
   return p.id === BUNDESTAG_ID || isEU(p);
 }
 
-export function LandingPage({ parliaments, onSelect, loading }: LandingPageProps) {
+export function LandingPage({ parliaments, onSelect, loading, onNavigateLegal }: LandingPageProps) {
   const federal = parliaments
     .filter(isFederal)
     .sort((a) => (a.id === BUNDESTAG_ID ? -1 : 1));
@@ -76,8 +77,23 @@ export function LandingPage({ parliaments, onSelect, loading }: LandingPageProps
         </>
       )}
 
-      <footer className="mt-16 text-center text-xs text-slate-400">
-        Daten: abgeordnetenwatch.de (CC0) · Umfragen: dawum.de (ODbL)
+      <footer className="mt-16 text-center text-xs text-slate-400 space-y-2">
+        <p>Daten: abgeordnetenwatch.de (CC0) · Umfragen: dawum.de (ODbL)</p>
+        <div className="flex items-center justify-center gap-4">
+          <button
+            onClick={() => onNavigateLegal('impressum')}
+            className="hover:text-slate-600 transition-colors underline underline-offset-2"
+          >
+            Impressum
+          </button>
+          <span>·</span>
+          <button
+            onClick={() => onNavigateLegal('datenschutz')}
+            className="hover:text-slate-600 transition-colors underline underline-offset-2"
+          >
+            Datenschutz
+          </button>
+        </div>
       </footer>
     </div>
   );
